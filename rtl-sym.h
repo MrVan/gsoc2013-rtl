@@ -32,7 +32,11 @@ typedef struct rtems_rtl_obj_sym_s
   const char*      name;    /**< The symbol's name. */
   void*            value;   /**< The value of the symbol. */
   uint32_t         data;    /**< Format specific data. */
+  uint32_t         index;   /**< Object index which the symbol belongs to. */
 } rtems_rtl_obj_sym_t;
+
+/* name, value, data, index are stored in the rap file */
+#define RTL_OBJ_SYM_SIZE 4
 
 /**
  * Table of symbols stored in a hash table.

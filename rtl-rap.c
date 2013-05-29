@@ -277,6 +277,8 @@ rtems_rtl_rap_relocate (rtems_rtl_rap_t* rap, rtems_rtl_obj_t* obj)
       uint32_t    symname_size;
       Elf_Word    symtype = 0;
       Elf_Word    symvalue = 0;
+      Elf_Word    symbinding = ~0;
+      Elf_Word    index = ~0;
 
       if (!rtems_rtl_rap_read_uint32 (rap->decomp, &info))
       {
@@ -290,6 +292,23 @@ rtems_rtl_rap_relocate (rtems_rtl_rap_t* rap, rtems_rtl_obj_t* obj)
         return false;
       }
 
+      if (!rtems_rtl_rap_read_uint32 (rap->decomp, &symtype))
+      {
+        free (symname_buffer);
+        return false;
+      }
+
+      if (!rtems_rtl_rap_read_uint32 (rap->decomp, &symbinding))
+      {
+        free (symname_buffer);
+        return false;
+      }
+
+      if (!rtems_rtl_rap_read_uint32 (rap->decomp, &index))
+      {
+        free (symname_buffer);
+        return false;
+      }
       /*
        * The types are:
        *
@@ -359,7 +378,7 @@ rtems_rtl_rap_relocate (rtems_rtl_rap_t* rap, rtems_rtl_obj_t* obj)
           symname = symname_buffer;
         }
 
-        symbol = rtems_rtl_symbol_obj_find (obj, symname);
+        symbol = rtems_rtl_symbol_obj_find_internal (obj, symname, index, symbinding);
 
         if (!symbol)
         {
@@ -456,10 +475,12 @@ rtems_rtl_rap_load_symbols (rtems_rtl_rap_t* rap, rtems_rtl_obj_t* obj)
     uint32_t              data;
     uint32_t              name;
     uint32_t              value;
+    uint32_t              index;
 
     if (!rtems_rtl_rap_read_uint32 (rap->decomp, &data) ||
         !rtems_rtl_rap_read_uint32 (rap->decomp, &name) ||
-        !rtems_rtl_rap_read_uint32 (rap->decomp, &value))
+        !rtems_rtl_rap_read_uint32 (rap->decomp, &value)||
+        !rtems_rtl_rap_read_uint32 (rap->decomp, &index))
     {
       free (obj->global_table);
       obj->global_table = NULL;
@@ -469,8 +490,8 @@ rtems_rtl_rap_load_symbols (rtems_rtl_rap_t* rap, rtems_rtl_obj_t* obj)
     }
 
     if (rtems_rtl_trace (RTEMS_RTL_TRACE_SYMBOL))
-      printf ("rtl: sym:load: data=0x%08lx name=0x%08lx value=0x%08lx\n",
-              data, name, value);
+      printf ("rtl: sym:load: data=0x%08lx name=0x%08lx value=0x%08lx index=0x%08lx\n",
+              data, name, value, index);
 
     /*
      * If there is a globally exported symbol already present and this
@@ -506,6 +527,7 @@ rtems_rtl_rap_load_symbols (rtems_rtl_rap_t* rap, rtems_rtl_obj_t* obj)
     gsym->name = rap->strtab + name;
     gsym->value = (uint8_t*) (value + symsect->base);
     gsym->data = data & 0xffff;
+    gsym->index = index;
 
     if (rtems_rtl_trace (RTEMS_RTL_TRACE_SYMBOL))
       printf ("rtl: sym:add:%-2d name:%-20s bind:%-2d type:%-2d val:%8p sect:%d\n",
@@ -739,7 +761,7 @@ rtems_rtl_rap_file_load (rtems_rtl_obj_t* obj, int fd)
   if (!rtems_rtl_rap_read_uint32 (rap.decomp, &rap.relocs_size))
     return false;
 
-  rap.symbols = rap.symtab_size / (3 * sizeof (uint32_t));
+  rap.symbols = rap.symtab_size / (RTL_OBJ_SYM_SIZE * sizeof (uint32_t));
 
   if (rtems_rtl_trace (RTEMS_RTL_TRACE_LOAD))
     printf ("rtl: rap: load: symtab=%lu (%lu) strtab=%lu relocs=%lu\n",

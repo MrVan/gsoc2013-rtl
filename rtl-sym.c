@@ -172,6 +172,29 @@ rtems_rtl_symbol_global_add (rtems_rtl_obj_t*     obj,
 }
 
 rtems_rtl_obj_sym_t*
+rtems_rtl_symbol_obj_find_internal (rtems_rtl_obj_t* obj, const char* name,
+    uint32_t index, uint32_t symbinding)
+{
+  rtems_rtl_obj_sym_t* sym;
+	size_t               s;
+  /*
+	 * Check the object file's symbols first. If not found search the
+   * * global symbol table.
+	 */
+  for (s = 0, sym = obj->global_table; s < obj->global_syms; ++s, ++sym) {
+    if (symbinding == STB_LOCAL) {
+      if ((strcmp (name, sym->name) == 0) && (sym->index == index))	
+        return sym;
+    } else if (strcmp (name, sym->name) == 0)
+      return sym;
+  }
+
+  if (symbinding == STB_LOCAL)
+    return NULL;
+  return rtems_rtl_symbol_global_find (name);
+}
+
+rtems_rtl_obj_sym_t*
 rtems_rtl_symbol_global_find (const char* name)
 {
   rtems_rtl_symbols_t* symbols;
