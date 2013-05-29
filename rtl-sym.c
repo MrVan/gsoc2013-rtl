@@ -27,6 +27,8 @@
 #include <rtl-sym.h>
 #include <rtl-trace.h>
 
+#include <sys/exec_elf.h>
+
 /**
  * The single symbol forced into the global symbol table that is used to load a
  * symbol table from an object file.
@@ -103,12 +105,26 @@ rtems_rtl_symbol_global_add (rtems_rtl_obj_t*     obj,
       return false;
     }
     ++count;
+#if defined(__arm__)
+    s += ((l+1+3)&(~3)) + sizeof (unsigned long);
+#else
     s += l + sizeof (unsigned long) + 1;
+#endif
   }
 
   /*
    * Check this is the correct end of the table.
    */
+#if defined(__arm__)
+  s += 4;
+  marker = esyms[s + 0];
+  marker <<= 8;
+  marker |= esyms[s + 1];
+  marker <<= 8;
+  marker |= esyms[s + 2];
+  marker <<= 8;
+  marker |= esyms[s + 3];
+#else
   marker = esyms[s + 1];
   marker <<= 8;
   marker |= esyms[s + 2];
@@ -116,6 +132,7 @@ rtems_rtl_symbol_global_add (rtems_rtl_obj_t*     obj,
   marker |= esyms[s + 3];
   marker <<= 8;
   marker |= esyms[s + 4];
+#endif
 
   if (marker != 0xdeadbeefUL)
   {
@@ -155,7 +172,11 @@ rtems_rtl_symbol_global_add (rtems_rtl_obj_t*     obj,
     int b;
 
     sym->name = (const char*) &esyms[s];
+#if defined(__arm__)
+    s += ((strlen(sym->name) + 1 + 3) & (~3));
+#else
     s += strlen (sym->name) + 1;
+#endif
     for (b = 0; b < sizeof (void*); ++b, ++s)
       copy_voidp.data[b] = esyms[s];
     sym->value = copy_voidp.value;

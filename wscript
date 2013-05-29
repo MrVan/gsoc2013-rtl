@@ -145,7 +145,7 @@ def build(bld):
     #
     bld(target = 'fs-root.tar',
         source = ['shell-init', 'libx.a'],
-        rule = 'tar cf - ${SRC} > ${TGT}')
+        rule = 'tar --format=ustar -cf ${TGT} ${SRC}')
     bld.objects(name = 'rootfs.prelink',
                 target = 'fs-root-tarfile.o',
                 source = 'fs-root.tar',
@@ -189,7 +189,7 @@ def build(bld):
     bld(target = 'fs-root.tar',
         name = 'fs',
         source = ['shell-init', 'libx.a', 'x.rap'] + raps,
-        rule = 'tar cf - ${SRC} > ${TGT}')
+        rule = 'tar --format=ustar -cf ${TGT} ${SRC}')
     bld.objects(name = 'rootfs',
                 target = 'fs-root-tarfile.o',
                 source = 'fs-root.tar',

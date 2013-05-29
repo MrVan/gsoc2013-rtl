@@ -46,7 +46,7 @@
 #define R_ARM_THM_ABS5		7
 #define R_ARM_ABS8		8
 #define R_ARM_SBREL32		9
-#define R_ARM_THM_PC22		10
+#define R_ARM_THM_CALL	10
 #define R_ARM_THM_PC8		11
 #define R_ARM_AMP_VCALL9	12
 #define R_ARM_SWI24		13
@@ -68,6 +68,10 @@
 #define R_ARM_GOTPC		25
 #define R_ARM_GOT32		26
 #define R_ARM_PLT32		27
+#define R_ARM_CALL        28
+#define R_ARM_JUMP24      29
+#define R_ARM_THM_JUMP24  30
+#define R_ARM_BASE_ABS    31
 
 #define R_ARM_ALU_PCREL_7_0	32
 #define R_ARM_ALU_PCREL_15_8	33
@@ -76,11 +80,22 @@
 #define R_ARM_ALU_SBREL_19_12	36
 #define R_ARM_ALU_SBREL_27_20	37
 
+#define R_ARM_V4BX    40
+#define R_ARM_PREL31  41
+
+#define R_ARM_MOVW_ABS_NC 43
+#define R_ARM_MOVT_ABS    44
+
+#define R_ARM_THM_MOVW_ABS_NC 47
+#define R_ARM_THM_MOVT_ABS    48
+
+#define R_ARM_THM_JUMP19      51
+#define R_ARM_THM_JUMP6       52
 /* 96-111 are reserved to G++. */
 #define R_ARM_GNU_VTENTRY	100
 #define R_ARM_GNU_VTINHERIT	101
-#define R_ARM_THM_PC11		102
-#define R_ARM_THM_PC9		103
+#define R_ARM_THM_JUMP11		102
+#define R_ARM_THM_JUMP8		103
 
 /* More TLS relocations */
 #define R_ARM_TLS_GD32		104	/* PC-rel 32 bit for global dynamic */
