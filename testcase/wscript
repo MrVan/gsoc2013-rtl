@@ -1,0 +1,32 @@
+import re
+import rtems
+
+def build(bld):
+    arch = bld.get_env()['RTEMS_ARCH']
+
+    bld(target = 'x',
+        features = 'c cstlib',
+        includes = bld.includes,
+        defines = bld.defines,
+        source = ['1.c', '2.c'])
+
+    if arch == 'arm':
+#		Note: the bsp is compiled in thumb mode
+#		The follow cflags is to test arm/thumb reloc code.
+#		cflags = '-marm -fno-common -DARM_TEST',
+#   cflags = '-mthumb -fno-common -DTHUMB_TEST',
+#   cflags = '-marm -mcpu=arm1176jzf-s -fno-common -DARM_TEST',
+
+      bld(target = 'test.rap',
+      features = 'c rap',
+      xxxx = 'hello', 
+
+      cflags = '-mthumb -fno-common -DTHUMB_TEST',
+  
+      rtems_linkflags = ['--base', 'rtld.prelink',
+                         '--entry', 'my_main'],
+      source = ['1.c', '2.c'])
+
+    bld(target = '../test.rap',
+				source = ['test.rap'],
+				rule = 'cp ${SRC} ${TGT}')
