@@ -386,7 +386,7 @@ def _find_installed_archs(config, path, version):
     archs = []
     if config is None:
         for d in os.listdir(path):
-            if d.endswith('-rtems' + version) or d.endswith('-rtemseabi' + version):
+            if d.endswith('-rtems' + version):
                 archs += [d]
     else:
         a = subprocess.check_output([config, '--list-format', '"%(arch)s"'])
@@ -400,10 +400,7 @@ def _check_archs(config, req, path, version):
     installed = _find_installed_archs(config, path, version)
     archs = []
     for a in req.split(','):
-        if a == 'arm':
-          arch = a + '-rtemseabi' + version
-        else:
-          arch = a + '-rtems' + version
+        arch = a + '-rtems' + version
         if arch in installed:
             archs += [arch]
     archs.sort()
@@ -433,10 +430,6 @@ def _check_arch_bsps(req, config, path, archs, version):
         found = False
         for arch in archs:
             a = '%s-rtems%s' % (abl[0], version)
-            if a == arch:
-                found = True
-                break
-            a = '%s-rtemseabi%s' % (abl[0], version)
             if a == arch:
                 found = True
                 break
