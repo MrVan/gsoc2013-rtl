@@ -1,7 +1,7 @@
 ====================
 arm:
   Simulator:
-  qemu-system-arm -no-reboot -net none -nographic -M realview-pbx-a9 -m 256M -kernel build/arm-rtemseabi4.11-realview_pbx_a9_qemu/rtld
+  qemu-system-arm -no-reboot -net none -nographic -M realview-pbx-a9 -m 256M -kernel build/arm-rtems4.11-realview_pbx_a9_qemu/rtld
   add "-S -s" option and you can use gdbserver to debug rtld
   use "halt" to exit qemu.
 
@@ -9,3 +9,11 @@ arm:
   waf configure --rtems=/opt/rtems-4.11 --rtems-tools=/opt/rtems-4.11 --rtems-archs=arm  --rtems-bsps=arm/realview_pbx_a9_qemu
 
   In the wscript, you can use different cflags to test.
+
+powerpc:
+  Simulator:
+  psim -i build/powerpc-rtems4.11-psim/rtld
+
+  Configuration:
+  waf configure --rtems=/opt/rtems-4.11 --rtems-tools=/opt/rtems-4.11 --rtems-archs=powerpc  --rtems-bsps=powerpc/psim
+  "-fno-common" are add to cflags to avoid common section problem.
