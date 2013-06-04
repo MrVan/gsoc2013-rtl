@@ -31,7 +31,7 @@ def build(bld):
       features = 'c rap',
       xxxx = 'hello', 
 
-      cflags = '-fno-common -DPPC_TEST',
+      cflags = '-fno-common',
   
       rtems_linkflags = ['--base', 'rtld.prelink',
                          '--entry', 'my_main'],

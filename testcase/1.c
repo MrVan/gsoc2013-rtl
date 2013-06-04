@@ -10,7 +10,7 @@ void hello(int arg)
     case 2:
       printf("Inter-module call hello()\n");
       break;
-#if defined PPC_TEST
+#if defined PPC
     case 24:
       printf("PPC ADDR24 'bla hello' call\n");
       break;
@@ -112,11 +112,7 @@ int rtems(int argc, char **argv)
       );
 #endif
 
-#else
-  /* other archs */
-#endif
-
-#if defined PPC_TEST
+#elif defined PPC
   __asm__ volatile (
       "stwu 3, -8(1)\r\n"
       "li 3, 24\r\n"
@@ -126,7 +122,7 @@ int rtems(int argc, char **argv)
       "lwz 3, 8(1)\r\n"
       "addi 1, 1, 8\r\n"
       );
-#if 1
+
   __asm__ volatile (
       "stwu 3, -4(1)\r\n"
       "li 3, 14\r\n"
@@ -142,7 +138,10 @@ int rtems(int argc, char **argv)
       "lwz 3, 4(1)\r\n"
       "addi 1, 1, 4\r\n"
       );
+
+#else
+  /* other archs */
 #endif
-#endif
+
   return 0;
 }
