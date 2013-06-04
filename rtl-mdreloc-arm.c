@@ -104,8 +104,8 @@ rtems_rtl_elf_relocate_rel (const rtems_rtl_obj_t*      obj,
         addend |= 0x80000000;
       if ((addend > 0x7fffffff) || ((int32_t)addend < -0x3fffffff)) {
         rtems_rtl_set_error (EINVAL, "%s: Overflow %ld "
-            "PREL31 relocations",
-            sect->name, (uint32_t) ELF_R_TYPE(rel->r_info));
+                             "PREL31 relocations",
+                             sect->name, (uint32_t) ELF_R_TYPE(rel->r_info));
         return false;
       }
 
@@ -116,7 +116,7 @@ rtems_rtl_elf_relocate_rel (const rtems_rtl_obj_t*      obj,
 
       if (rtems_rtl_trace (RTEMS_RTL_TRACE_RELOC))
         printf ("rtl: PREL31 %p @ %p in %s\n",
-            (void *)tmp, where, rtems_rtl_obj_oname (obj));
+                (void *)tmp, where, rtems_rtl_obj_oname (obj));
       break;
 
     case R_TYPE(PC24): /* Deprecated */
@@ -157,7 +157,7 @@ rtems_rtl_elf_relocate_rel (const rtems_rtl_obj_t*      obj,
 
       if (rtems_rtl_trace (RTEMS_RTL_TRACE_RELOC))
         printf ("rtl: JUMP24/PC24/CALL %p @ %p in %s\n",
-            (void *)*where, where, rtems_rtl_obj_oname (obj));
+                (void *)*where, where, rtems_rtl_obj_oname (obj));
       break;
 
     case R_TYPE(V4BX): /* Miscellaneous */
@@ -168,7 +168,7 @@ rtems_rtl_elf_relocate_rel (const rtems_rtl_obj_t*      obj,
 #endif
       if (rtems_rtl_trace (RTEMS_RTL_TRACE_RELOC)) {
         printf ("rtl: V4BX %p @ %p in %s\n",
-            (void *)*where, where, rtems_rtl_obj_oname (obj));
+                (void *)*where, where, rtems_rtl_obj_oname (obj));
       }
       break;
 
@@ -185,8 +185,8 @@ rtems_rtl_elf_relocate_rel (const rtems_rtl_obj_t*      obj,
         tmp >>= 16;	
         if (((int)tmp >= 0x8000) || ((int)tmp < -0x8000)) {
           rtems_rtl_set_error (EINVAL, "%s: Overflow %ld "
-              "MOVT_ABS relocations",
-              sect->name, (uint32_t) ELF_R_TYPE(rel->r_info));
+                               "MOVT_ABS relocations",
+                               sect->name, (uint32_t) ELF_R_TYPE(rel->r_info));
           return false;
         }
       }
@@ -195,7 +195,7 @@ rtems_rtl_elf_relocate_rel (const rtems_rtl_obj_t*      obj,
 
       if (rtems_rtl_trace (RTEMS_RTL_TRACE_RELOC))
         printf ("rtl: MOVT_ABS/MOVW_ABS_NC %p @ %p in %s\n",
-            (void *)*where, where, rtems_rtl_obj_oname (obj));
+                (void *)*where, where, rtems_rtl_obj_oname (obj));
       break;
 
     case R_TYPE(REL32): /* word32 (S + A) | T - P */
@@ -220,7 +220,7 @@ rtems_rtl_elf_relocate_rel (const rtems_rtl_obj_t*      obj,
       }
       if (rtems_rtl_trace (RTEMS_RTL_TRACE_RELOC))
         printf ("rtl: REL32/ABS32/GLOB_DAT %p @ %p in %s",
-            (void *)tmp, where, rtems_rtl_obj_oname (obj));
+                (void *)tmp, where, rtems_rtl_obj_oname (obj));
       break;
 
 
@@ -253,7 +253,7 @@ rtems_rtl_elf_relocate_rel (const rtems_rtl_obj_t*      obj,
       if (rtems_rtl_trace (RTEMS_RTL_TRACE_RELOC)) {
         printf("upper_insn 0x%02x lower_insn 0x%02x\n", upper_insn, lower_insn);
         printf ("rtl: THM_MOVT_ABS/THM_MOVW_ABS_NC %p @ %p in %s\n",
-            (void *)*where, where, rtems_rtl_obj_oname (obj));
+                (void *)*where, where, rtems_rtl_obj_oname (obj));
       }
 
       break;
@@ -290,8 +290,8 @@ rtems_rtl_elf_relocate_rel (const rtems_rtl_obj_t*      obj,
 
       if (((int32_t)tmp > (int32_t)(1<<24)) || ((int32_t)tmp < (int32_t)(0xff<<24))) {
         rtems_rtl_set_error (EINVAL, "%s: Overflow %ld "
-            "THM_CALL/THM_JUMP24 relocations",
-            sect->name, (uint32_t) ELF_R_TYPE(rel->r_info));
+                             "THM_CALL/THM_JUMP24 relocations",
+                             sect->name, (uint32_t) ELF_R_TYPE(rel->r_info));
         return false;
       }
 
@@ -309,7 +309,7 @@ rtems_rtl_elf_relocate_rel (const rtems_rtl_obj_t*      obj,
       if (rtems_rtl_trace (RTEMS_RTL_TRACE_RELOC)){
         printf("modified upper_insn 0x%04x lower_insn 0x%04x\n", upper_insn, lower_insn);
         printf ("rtl: THM_CALL/JUMP24 %p @ %p in %s\n",
-            (void *)*where, where, rtems_rtl_obj_oname (obj));
+                (void *)*where, where, rtems_rtl_obj_oname (obj));
       }
 
       break;
@@ -344,8 +344,8 @@ rtems_rtl_elf_relocate_rel (const rtems_rtl_obj_t*      obj,
 
       if (((int32_t)tmp > (int32_t)(0xffffe)) || ((int32_t)tmp < (int32_t)(0xfff<<20))) {
         rtems_rtl_set_error (EINVAL, "%s: Overflow %ld "
-            "THM_JUMP19 relocations",
-            sect->name, (uint32_t) ELF_R_TYPE(rel->r_info));
+                             "THM_JUMP19 relocations",
+                             sect->name, (uint32_t) ELF_R_TYPE(rel->r_info));
         return false;
       }
       sign = (tmp >> 20) & 0x1;
@@ -357,7 +357,7 @@ rtems_rtl_elf_relocate_rel (const rtems_rtl_obj_t*      obj,
 
       if (rtems_rtl_trace (RTEMS_RTL_TRACE_RELOC))
         printf ("rtl: THM_JUMP19 %p @ %p in %s\n",
-            (void *)*where, where, rtems_rtl_obj_oname (obj));
+                (void *)*where, where, rtems_rtl_obj_oname (obj));
       break;
 
 #if 1
@@ -371,7 +371,7 @@ rtems_rtl_elf_relocate_rel (const rtems_rtl_obj_t*      obj,
       *(uint16_t *)where = (*(uint16_t *)where & 0xf83f) | tmp;
       if (rtems_rtl_trace (RTEMS_RTL_TRACE_RELOC))
         printf ("rtl: THM_ABS5 %p @ %p in %s\n",
-            (void *)*where, where, rtems_rtl_obj_oname (obj));
+                (void *)*where, where, rtems_rtl_obj_oname (obj));
       break;
 #endif
       int bit,mask;
@@ -414,18 +414,18 @@ rtems_rtl_elf_relocate_rel (const rtems_rtl_obj_t*      obj,
       *(uint16_t *)where = (*(uint16_t *)where & ~((1<<bit)-1)) | tmp;
       if (rtems_rtl_trace (RTEMS_RTL_TRACE_RELOC))
         printf ("rtl: THM_JUMP8/JUMP11/JUMP6 %p @ %p in %s\n",
-            (void *)*where, where, rtems_rtl_obj_oname (obj));
+                (void *)*where, where, rtems_rtl_obj_oname (obj));
       break;
 
     default:
       printf ("rtl: reloc unknown: sym = %lu, type = %lu, offset = %p, "
-          "contents = %p\n",
-          ELF_R_SYM(rel->r_info), (uint32_t) ELF_R_TYPE(rel->r_info),
-          (void *)rel->r_offset, (void *)*where);
+              "contents = %p\n",
+              ELF_R_SYM(rel->r_info), (uint32_t) ELF_R_TYPE(rel->r_info),
+              (void *)rel->r_offset, (void *)*where);
       rtems_rtl_set_error (EINVAL,
-          "%s: Unsupported relocation type %ld "
-          "in non-PLT relocations",
-          sect->name, (uint32_t) ELF_R_TYPE(rel->r_info));
+                           "%s: Unsupported relocation type %ld "
+                           "in non-PLT relocations",
+                           sect->name, (uint32_t) ELF_R_TYPE(rel->r_info));
       return false;
   }
 

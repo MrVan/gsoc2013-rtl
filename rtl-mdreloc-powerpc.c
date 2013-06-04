@@ -53,7 +53,7 @@ rtems_rtl_elf_relocate_rela (const rtems_rtl_obj_t*      obj,
       *where = symvalue + rela->r_addend;
       if (rtems_rtl_trace (RTEMS_RTL_TRACE_RELOC))
         printf ("rtl: ADDR32 %p @ %p in %s\n",
-            (void *)*(where), where, rtems_rtl_obj_oname (obj));
+                (void *)*(where), where, rtems_rtl_obj_oname (obj));
       break;
 
     case R_TYPE(14):
@@ -82,7 +82,7 @@ rtems_rtl_elf_relocate_rela (const rtems_rtl_obj_t*      obj,
       *where = tmp;
       if (rtems_rtl_trace (RTEMS_RTL_TRACE_RELOC))
         printf ("rtl: ADDR14/ADDR24 %p @ %p in %s\n",
-            (void *)*where, where, rtems_rtl_obj_oname (obj));
+                (void *)*where, where, rtems_rtl_obj_oname (obj));
       break;
 
     case R_TYPE(16_HA):
@@ -94,7 +94,7 @@ rtems_rtl_elf_relocate_rela (const rtems_rtl_obj_t*      obj,
       *(uint16_t *)where = (((tmp >> 16) + ((tmp & 0x8000) ? 1: 0)) & 0xffff);
       if (rtems_rtl_trace (RTEMS_RTL_TRACE_RELOC))
         printf ("rtl: 16_HA %p @ %p in %s\n",
-            (void *)*(where), where, rtems_rtl_obj_oname (obj));
+                (void *)*(where), where, rtems_rtl_obj_oname (obj));
       break;
 
     case R_TYPE(16_HI):
@@ -104,7 +104,7 @@ rtems_rtl_elf_relocate_rela (const rtems_rtl_obj_t*      obj,
       *(uint16_t *)where = ((symvalue + rela->r_addend) >> 16) & 0xffff;
       if (rtems_rtl_trace (RTEMS_RTL_TRACE_RELOC))
         printf ("rtl: 16_HI %p @ %p in %s\n",
-            (void *)*where, where, rtems_rtl_obj_oname (obj));
+                (void *)*where, where, rtems_rtl_obj_oname (obj));
       break;
     case R_TYPE(16_LO):
       /*
@@ -113,7 +113,7 @@ rtems_rtl_elf_relocate_rela (const rtems_rtl_obj_t*      obj,
       *(uint16_t *)where = (symvalue + (rela->r_addend)) & 0xffff;
       if (rtems_rtl_trace (RTEMS_RTL_TRACE_RELOC))
         printf ("rtl: 16_LO %p @ %p in %s\n",
-            (void *)*where, where, rtems_rtl_obj_oname (obj));
+                (void *)*where, where, rtems_rtl_obj_oname (obj));
       break;
     
     case R_TYPE(REL14):
@@ -146,7 +146,7 @@ rtems_rtl_elf_relocate_rela (const rtems_rtl_obj_t*      obj,
       *where = tmp;
       if (rtems_rtl_trace (RTEMS_RTL_TRACE_RELOC))
         printf ("rtl: REL24/REL14 %p @ %p in %s\n",
-            (void *)*where, where, rtems_rtl_obj_oname (obj));
+                (void *)*where, where, rtems_rtl_obj_oname (obj));
       break;
 
     case R_TYPE(REL32):
@@ -156,18 +156,18 @@ rtems_rtl_elf_relocate_rela (const rtems_rtl_obj_t*      obj,
       *where = symvalue + rela->r_addend - (Elf_Addr)where;
       if (rtems_rtl_trace (RTEMS_RTL_TRACE_RELOC))
         printf ("rtl: REL32 %p @ %p in %s\n",
-            (void *)*where, where, rtems_rtl_obj_oname (obj));
+                (void *)*where, where, rtems_rtl_obj_oname (obj));
       break;
 
     default:
       printf ("rtl: reloc unknown: sym = %lu, type = %lu, offset = %p, "
-          "contents = %p\n",
-          ELF_R_SYM(rela->r_info), (uint32_t) ELF_R_TYPE(rela->r_info),
-          (void *)rela->r_offset, (void *)*where);
+              "contents = %p\n",
+              ELF_R_SYM(rela->r_info), (uint32_t) ELF_R_TYPE(rela->r_info),
+              (void *)rela->r_offset, (void *)*where);
       rtems_rtl_set_error (EINVAL,
-          "%s: Unsupported relocation type %ld "
-          "in non-PLT relocations",
-          sect->name, (uint32_t) ELF_R_TYPE(rela->r_info));
+                           "%s: Unsupported relocation type %ld "
+                           "in non-PLT relocations",
+                           sect->name, (uint32_t) ELF_R_TYPE(rela->r_info));
       return false;
   }
   return true;
@@ -175,11 +175,11 @@ rtems_rtl_elf_relocate_rela (const rtems_rtl_obj_t*      obj,
 
 bool
 rtems_rtl_elf_relocate_rel (const rtems_rtl_obj_t*      obj,
-    const Elf_Rel*              rel,
-    const rtems_rtl_obj_sect_t* sect,
-    const char*                 symname,
-    const Elf_Byte              syminfo,
-    const Elf_Word              symvalue)
+                            const Elf_Rel*              rel,
+                            const rtems_rtl_obj_sect_t* sect,
+                            const char*                 symname,
+                            const Elf_Byte              syminfo,
+                            const Elf_Word              symvalue)
 {
   printf ("rtl: rel type record not supported; please report\n");
   return false;
