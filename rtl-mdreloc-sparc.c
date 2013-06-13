@@ -97,6 +97,7 @@ static const uint32_t reloc_target_flags[] = {
   _RF_S|_RF_A|  _RF_U|_RF_SZ(32) | _RF_RS(0),    /* UA_32 */
 };
 
+#define NOT_CURRENTLY_USED_BUT_MAYBE_USEFUL
 #ifdef NOT_CURRENTLY_USED_BUT_MAYBE_USEFUL
 static const char *reloc_names[] = {
   "NONE", "RELOC_8", "RELOC_16", "RELOC_32", "DISP_8",
@@ -243,6 +244,10 @@ rtems_rtl_elf_relocate_rela (const rtems_rtl_obj_t*      obj,
     *where &= ~mask;
     *where |= value;
   }
+
+  if (rtems_rtl_trace (RTEMS_RTL_TRACE_RELOC))
+    printf ("rtl: %s %p @ %p in %s\n",
+            reloc_names[type], (void *)*where, where, rtems_rtl_obj_oname (obj));
 
   return true;
 }

@@ -18,6 +18,14 @@ void tst_pc16(void)
 #endif
 #endif
 
+#if defined (__sparc__)
+void tst_wdisp(void)
+{
+  printf("R_SPARC_DISP22: pass\n");
+  return;
+}
+#endif
+
 int my_main(int argc, char **argv)
 {
   exit(0);
