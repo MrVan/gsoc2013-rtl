@@ -28,6 +28,10 @@ void hello(int arg)
     case 13:
       printf("SPARC 13 'mov hello, %%l4'\n");
       break;
+#elif defined (__nios2__)
+    case 16:
+      printf("NIOS2 HI16,PCREL16 pass\n\t");
+      break;
 #else
 
 #endif
@@ -228,6 +232,31 @@ int rtems(int argc, char **argv)
      "mov %%l5, %%o0\n\t"
      "nop\n\t": : :
       );
+
+#elif defined (__nios2__)
+  __asm__ volatile (
+      "nop\n\t"
+      "movi r8, 1\n\t"
+      "movi r9, 2\n\t"
+      "movhi ra, %%hi(1f)\n\t" /* HI16 */
+      "ori ra, ra, %%lo(1f)\n\t"
+      "movi r4, 16\n\t"
+      "ble r8, r9, test\n\t" /* PCREL */
+      "nop\n\t"
+      "1:\n\t"
+      "nop\n\t"
+      "movi r4, 32\n\t"
+      "movi r8, %%hi(2f)\n\t"
+      "ori r8, r8, %%lo(2f)\n\t"
+      "stw r4, 0(r8)\n\t"
+      "nop\n\t"
+      "2:\n\t"
+      ".word global\n\t"
+      "nop\n\t" : : : "r4", "r8", "r9", "ra"
+      );
+
+  if (global == 32)
+    printf("NIOS2 BFD_RELOC32\n");
 
 #else
   /* other archs */

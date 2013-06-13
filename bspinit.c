@@ -22,6 +22,11 @@
  * command line string (ASCIIZ).
  */
 
+/*
+ * By making this a weak alias and a user can provide there own.
+ */
+
+void Init (rtems_task_argument arg) __attribute__ ((weak));
 int main (int argc, char* argv[]);
 void Init (rtems_task_argument arg);
 
@@ -88,8 +93,3 @@ void Init (rtems_task_argument arg)
   exit (result);
 }
 
-/*
- * By making this a weak alias and a user can provide there own.
- */
-
-void Init (rtems_task_argument arg) __attribute__ ((weak));
