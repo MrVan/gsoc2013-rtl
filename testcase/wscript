@@ -46,7 +46,7 @@ def build(bld):
       cflags = '-fno-common',
   
       rtems_linkflags = ['--base', 'rtld.prelink',
-                         '--entry', 'my_main'],
+                         '--entry', 'my_main', '-a', 'mips'],
       source = ['1.c', '2.c'])
 
     elif arch == 'sparc':
