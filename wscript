@@ -66,7 +66,7 @@ def build(bld):
     #
     # The ARM as special BSP initialise code.
     #
-    if arch == 'arm' or arch == 'powerpc' or arch == 'mips':
+    if arch == 'arm' or arch == 'powerpc' or arch == 'mips' or arch == 'bfin':
         bld(target = 'bspinit',
             features = 'c',
             includes = bld.includes,
@@ -174,19 +174,31 @@ def build(bld):
     # Build the actual kernel with the root file system with the application.
     #
 
+    if arch == 'bfin':
+      bld.env.GSYMS_FLAGS += ['--has-underscore']
+
     bld(name = 'gsyms',
         target = 'rtld-gsyms.c',
         source = 'rtld.prelink',
         rule = '${NM} -g ${SRC} | ${AWK} -f ${GSYMS_AWK} ${GSYMS_FLAGS} > ${TGT}')
 
-    bld(target = 'x.rap',
-        features = 'c rap',
-        xxxx = 'hello',
-        rtems_linkflags = ['--base', 'rtld.prelink',
-                           '--entry', 'my_main'],
-        source = ['xa.c',
-                  'x-long-name-to-create-gnu-extension-in-archive.c'])
-    
+    if arch == 'bfin':
+      bld(target = 'x.rap',
+          features = 'c rap',
+          xxxx = 'hello',
+          rtems_linkflags = ['--base', 'rtld.prelink',
+                             '--entry', '_my_main'],
+          source = ['xa.c',
+                    'x-long-name-to-create-gnu-extension-in-archive.c'])
+    else:
+      bld(target = 'x.rap',
+          features = 'c rap',
+          xxxx = 'hello',
+          rtems_linkflags = ['--base', 'rtld.prelink',
+                             '--entry', 'my_main'],
+          source = ['xa.c',
+                    'x-long-name-to-create-gnu-extension-in-archive.c'])
+
     bld.recurse('testcase');
 
     if re.match('pc[3456]86', bsp) is not None:

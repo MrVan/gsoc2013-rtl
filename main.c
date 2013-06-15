@@ -57,7 +57,7 @@ int remote_debug;
  *  The tarfile is built automatically externally so we need to account
  *  for the leading symbol on the names.
  */
-#if defined(__sh__)
+#if defined(__sh__) || defined(__bfin__)
   #define SYM(_x) _x
 #else
   #define SYM(_x) _ ## _x

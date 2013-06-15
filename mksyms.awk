@@ -16,8 +16,16 @@ function c_header()
   print (" *  Automatically generated. Do not edit, just regenerate.");
   print (" */");
   print ("");
-  print ("extern unsigned char __rtems_rtl_base_globals[];");
-  print ("extern unsigned int __rtems_rtl_base_globals_size;");
+  if (underscore)
+  {
+    print ("extern unsigned char _rtems_rtl_base_globals[];");
+    print ("extern unsigned int _rtems_rtl_base_globals_size;");
+  }
+  else
+  {
+    print ("extern unsigned char __rtems_rtl_base_globals[];");
+    print ("extern unsigned int __rtems_rtl_base_globals_size;");
+  }
   print ("");
   print ("asm(\"  .align   4\");");
   print ("asm(\"__rtems_rtl_base_globals:\");");
@@ -38,8 +46,16 @@ function c_trailer()
 function c_rtl_call_body()
 {
   print ("{");
-  print ("  rtems_rtl_base_sym_global_add (__rtems_rtl_base_globals,");
-  print ("                                 __rtems_rtl_base_globals_size);");
+  if (underscore)
+  {
+    print ("  rtems_rtl_base_sym_global_add (_rtems_rtl_base_globals,");
+    print ("                                 _rtems_rtl_base_globals_size);");
+  }
+  else
+  {
+    print ("  rtems_rtl_base_sym_global_add (__rtems_rtl_base_globals,");
+    print ("                                 __rtems_rtl_base_globals_size);");
+  }
   print ("}");
 }
 
@@ -64,11 +80,17 @@ BEGIN {
   OFS = " ";
   started = 0
   embed = 1
+  underscore = 0;
   for (a = 0; a < ARGC; ++a)
   {
     if (ARGV[a] == "--no-embed")
     {
       embed = 0
+      delete ARGV[a];
+    }
+    else if (ARGV[a] == "--has-underscore")
+    {
+      underscore = 1;
       delete ARGV[a];
     }
     else if (ARGV[a] != "-")

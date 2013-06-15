@@ -323,7 +323,11 @@ rtems_rap_load (const char* name, int mode, int argc, const char* argv[])
       return false;
     }
 
+#if defined (__bfin__)
+    init = dlsym (app->handle, "_rtems");
+#else
     init = dlsym (app->handle, "rtems");
+#endif
     if (!init)
     {
       rtems_rap_get_rtl_error ();
@@ -332,7 +336,11 @@ rtems_rap_load (const char* name, int mode, int argc, const char* argv[])
       return false;
     }
 
+#if defined (__bfin__)
+    fini = dlsym (app->handle, "_rtems");
+#else
     fini = dlsym (app->handle, "rtems");
+#endif
     if (!fini)
     {
       rtems_rap_get_rtl_error ();

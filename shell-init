@@ -9,5 +9,6 @@
 #dlo c/bsdport.rap
 #dlo bsdport.rap
 
-rap ld ./bsdport.rap
-rap ls
+#rap ld ./bsdport.rap
+#rap ls
+rap ld ./test.rap
