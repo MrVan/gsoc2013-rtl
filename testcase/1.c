@@ -38,6 +38,11 @@ void hello(int arg)
     case 13:
       printf("SPARC 13 'mov hello, %%l4'\n");
       break;
+#elif defined (__moxie__)
+    case 10:
+      printf("Just test 'beq hello, PCREL10', so just halt here\n");
+      while(1);
+      break;
 #else
 
 #endif
@@ -267,6 +272,14 @@ int rtems(int argc, char **argv)
 
   if (global == 22)
     printf("R_LM32_32 pass\n");
+
+#elif defined (__moxie__)
+  __asm__ volatile (
+      "ldi.l $r0, 10\n\t" 
+      "ldi.l $r1, 10\n\t" 
+      "cmp $r0, $r1\n\t"
+      "beq hello\n\t");
+
 #else
   /* other archs */
 #endif

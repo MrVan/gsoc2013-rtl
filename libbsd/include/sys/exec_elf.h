@@ -330,6 +330,8 @@ typedef struct {
 
 #define EM_MICROBLAZE   189     /* Xilinx MicroBlaze 32-bit RISC soft processor core */
 
+#define EM_MOXIE  0xFEED
+
 /* Unofficial machine types follow */
 #define	EM_AVR32	6317	/* used by NetBSD/avr32 */
 #define	EM_ALPHA_EXP	36902	/* used by NetBSD/alpha; obsolete */
