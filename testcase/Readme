@@ -35,3 +35,9 @@ h8300:
  Simulator:
    h8sim -i build/h8300-rtems4.11-h8sim/rtld
 
+lm32:
+ configure --rtems=/opt/rtems-4.11 --rtems-tools=/opt/rtems-4.11 --rtems-archs=lm32 --rtems-bsps=lm32/lm32_evr
+
+ Simulator:
+    lm32_evr-gdb build/lm32-rtems4.11-lm32_evr/rtld
+    qemu-system-lm32  -M lm32-evr -nographic -global lm32,sys.enabled=1 -kernel build/lm32-rtems4.11-lm32_evr/rtld
