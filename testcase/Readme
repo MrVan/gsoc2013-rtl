@@ -24,3 +24,14 @@ bfin:
   "-mlong-calls" can generate fewer reloc types. One can use this option to see what it affects.
   Simulator:
     bf537Stamp-gdb build/bfin-rtems4.11-bf537Stamp/rtld
+
+h8300:
+ configure --rtems=/opt/rtems-4.11 --rtems-tools=/opt/rtems-4.11 --rtems-archs=h8300 --rtems-bsps=h8300/h8sim
+ 
+ configure --rtems=/opt/rtems-4.11 --rtems-tools=/opt/rtems-4.11 --rtems-archs=h8300 --rtems-bsps=h8300/h8sxsim
+
+ You should change '-B ${RTEMS_ARCH}' to '-B h8300h' for h8sim and '-B h8300sx' for h8sxsim
+
+ Simulator:
+   h8sim -i build/h8300-rtems4.11-h8sim/rtld
+

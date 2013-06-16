@@ -66,7 +66,7 @@ def build(bld):
     #
     # The ARM as special BSP initialise code.
     #
-    if arch == 'arm' or arch == 'powerpc' or arch == 'mips' or arch == 'bfin':
+    if arch == 'arm' or arch == 'powerpc' or arch == 'mips' or arch == 'bfin' or arch == 'h8300':
         bld(target = 'bspinit',
             features = 'c',
             includes = bld.includes,
@@ -152,6 +152,7 @@ def build(bld):
     bld(target = 'fs-root.tar',
         source = ['shell-init', 'libx.a'],
         rule = 'tar --format=ustar -cf ${TGT} ${SRC}')
+
     bld.objects(name = 'rootfs.prelink',
                 target = 'fs-root-tarfile.o',
                 source = 'fs-root.tar',
@@ -174,7 +175,7 @@ def build(bld):
     # Build the actual kernel with the root file system with the application.
     #
 
-    if arch == 'bfin':
+    if arch == 'bfin' or arch == 'h8300':
       bld.env.GSYMS_FLAGS += ['--has-underscore']
 
     bld(name = 'gsyms',
@@ -182,7 +183,7 @@ def build(bld):
         source = 'rtld.prelink',
         rule = '${NM} -g ${SRC} | ${AWK} -f ${GSYMS_AWK} ${GSYMS_FLAGS} > ${TGT}')
 
-    if arch == 'bfin':
+    if arch == 'bfin' or arch == 'h8300':
       bld(target = 'x.rap',
           features = 'c rap',
           xxxx = 'hello',
@@ -210,6 +211,7 @@ def build(bld):
         name = 'fs',
         source = ['shell-init', 'libx.a', 'x.rap', 'test.rap'] + raps,
         rule = 'tar --format=ustar -cf ${TGT} ${SRC}')
+
     bld.objects(name = 'rootfs',
                 target = 'fs-root-tarfile.o',
                 source = 'fs-root.tar',
