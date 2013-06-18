@@ -323,7 +323,7 @@ rtems_rap_load (const char* name, int mode, int argc, const char* argv[])
       return false;
     }
 
-#if defined(__bfin__) || defined(__h8300__)
+#if defined(__bfin__) || defined(__h8300__) || defined(__v850__)
     init = dlsym (app->handle, "_rtems");
 #else
     init = dlsym (app->handle, "rtems");
@@ -336,7 +336,7 @@ rtems_rap_load (const char* name, int mode, int argc, const char* argv[])
       return false;
     }
 
-#if defined(__bfin__) || defined(__h8300__)
+#if defined(__bfin__) || defined(__h8300__) || defined(__v850__)
     fini = dlsym (app->handle, "_rtems");
 #else
     fini = dlsym (app->handle, "rtems");
