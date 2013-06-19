@@ -43,6 +43,10 @@ void hello(int arg)
       printf("Just test 'beq hello, PCREL10', so just halt here\n");
       while(1);
       break;
+#elif defined (__m32r__)
+    case 18:
+      printf("beq r0, r4, hello, 18_PCREL_RELA pass\n");
+      break;
 #else
 
 #endif
@@ -280,6 +284,31 @@ int rtems(int argc, char **argv)
       "cmp $r0, $r1\n\t"
       "beq hello\n\t");
 
+#elif defined (__m32r__)
+#if 1
+  __asm__ volatile (
+      "push r0\n\t"
+      "push r4\n\t"
+      "push r14\n\t"
+      "ld24 r14, 2f\n\t"
+      "ldi r0, #18\n\t"
+      "ldi r4, #18\n\t"
+      "beq r0, r4, hello\n\t"
+      "1:\n\t"
+      ".word global\n\t"
+      "2:\n\t"
+      "ld24 r0, 1b\n\t"
+      "ld r4, @r0\n\t"
+      "ldi r0, #22\n\t"
+      "st r0, @r4\n\t"
+      "pop r14\n\t"
+      "pop r4\n\t"
+      "pop r0\n\t"
+      );
+  if (global == 22)
+    printf("R_M32R_32_RELA, .word global pass\n");
+
+#endif
 #else
   /* other archs */
 #endif
