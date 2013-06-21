@@ -59,3 +59,8 @@ m32r:
  Simulator:
     m32rsim-gdb build/m32r-rtems4.11-m32rsim/rtld
 
+Superh:
+ configure --rtems=/opt/rtems-4.11 --rtems-tools=/opt/rtems-4.11 --rtems-archs=sh --rtems-bsps=sh/simsh4
+
+ Simulator:
+   simsh-gdb build/sh-rtems4.11-simsh4/rtld 

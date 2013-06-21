@@ -34,7 +34,10 @@ function c_header()
 function c_trailer()
 {
   print ("asm(\"  .byte    0\");");
-  print ("asm(\"  .align 0\");");
+  if (mustalign2)
+    print ("asm(\"  .align 2\");");
+  else
+    print ("asm(\"  .align 0\");");
   print ("asm(\"  .ascii \\\"\\xde\\xad\\xbe\\xef\\\"\");");
   print ("asm(\"  .align   4\");");
   print ("asm(\"__rtems_rtl_base_globals_size:\");");
@@ -81,6 +84,7 @@ BEGIN {
   started = 0
   embed = 1
   underscore = 0;
+  mustalign2 = 0;
   for (a = 0; a < ARGC; ++a)
   {
     if (ARGV[a] == "--no-embed")
@@ -91,6 +95,11 @@ BEGIN {
     else if (ARGV[a] == "--has-underscore")
     {
       underscore = 1;
+      delete ARGV[a];
+    }
+    else if (ARGV[a] == "--must-align2")
+    {
+      mustalign2 = 1;
       delete ARGV[a];
     }
     else if (ARGV[a] != "-")
@@ -115,7 +124,11 @@ END {
       printf ("asm(\"  .asciz \\\"%s\\\"\");\n", symbols[s]);
       if (embed)
       {
-        printf ("asm(\"  .align 0\");\n");
+        if (mustalign2)
+          printf ("asm(\"  .align 2\");\n");
+        else
+          printf ("asm(\"  .align 0\");\n");
+        
         printf ("asm(\"  .long %s\");\n", symbols[s]);
       }
       else

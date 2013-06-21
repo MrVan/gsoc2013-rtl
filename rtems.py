@@ -176,6 +176,11 @@ def tweaks(conf, arch_bsp):
         conf.env.OBJCOPY_FLAGS = ['-I', 'binary', '-O', 'elf32-bigmips']
     elif conf.env.RTEMS_ARCH in ['moxie']:
         conf.env.OBJCOPY_FLAGS = ['-I', 'binary', '-O', 'elf32-bigmoxie']
+    #
+    # If big endian for sh, the 'elf32-shl' should be changed to 'elf32-sh'
+    #
+    elif conf.env.RTEMS_ARCH in ['sh']:
+        conf.env.OBJCOPY_FLAGS = ['-I', 'binary', '-O', 'elf32-shl']
     else:
         conf.env.OBJCOPY_FLAGS = ['-O', 'elf32-' + conf.env.RTEMS_ARCH]
 

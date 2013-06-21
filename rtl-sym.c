@@ -105,7 +105,7 @@ rtems_rtl_symbol_global_add (rtems_rtl_obj_t*     obj,
       return false;
     }
     ++count;
-#if defined(__arm__)
+#if defined(__align2__)
     s += ((l+1+3)&(~3)) + sizeof (unsigned long);
 #else
     s += l + sizeof (unsigned long) + 1;
@@ -115,7 +115,7 @@ rtems_rtl_symbol_global_add (rtems_rtl_obj_t*     obj,
   /*
    * Check this is the correct end of the table.
    */
-#if defined(__arm__)
+#if defined(__align2__)
   s += 4;
   marker = esyms[s + 0];
   marker <<= 8;
@@ -172,7 +172,7 @@ rtems_rtl_symbol_global_add (rtems_rtl_obj_t*     obj,
     int b;
 
     sym->name = (const char*) &esyms[s];
-#if defined(__arm__)
+#if defined(__align2__)
     s += ((strlen(sym->name) + 1 + 3) & (~3));
 #else
     s += strlen (sym->name) + 1;

@@ -54,6 +54,12 @@ def build(bld):
                    'RTEMS_RTL_RAP_LOADER=1']
     bld.cflags = ['-g', '-O']
 
+    #
+    # Endian for sh
+    #
+    if arch == 'sh':
+      bld.cflags += ['-D_BYTE_ORDER=_LITTLE_ENDIAN'];
+
     if re.match('pc[3456]86', bsp) is not None:
         bld.defines += ['RTEMS_APP_IDEDISK=1']
 
@@ -66,7 +72,7 @@ def build(bld):
     #
     # The ARM as special BSP initialise code.
     #
-    if arch == 'arm' or arch == 'powerpc' or arch == 'mips' or arch == 'bfin' or arch == 'h8300' or arch == 'lm32' or arch == 'moxie' or arch == 'v850' or arch == 'm32r':
+    if arch == 'arm' or arch == 'powerpc' or arch == 'mips' or arch == 'bfin' or arch == 'h8300' or arch == 'lm32' or arch == 'moxie' or arch == 'v850' or arch == 'm32r' or arch == 'sh':
         bld(target = 'bspinit',
             features = 'c',
             includes = bld.includes,
@@ -175,8 +181,11 @@ def build(bld):
     # Build the actual kernel with the root file system with the application.
     #
 
-    if arch == 'bfin' or arch == 'h8300' or arch == 'v850':
+    if arch == 'bfin' or arch == 'h8300' or arch == 'v850' or arch == 'sh':
       bld.env.GSYMS_FLAGS += ['--has-underscore']
+    if arch == 'sh' or arch == 'arm':
+      bld.env.GSYMS_FLAGS += ['--must-align2']
+      bld.cflags += ['-D__align2__']
 
     bld(name = 'gsyms',
         target = 'rtld-gsyms.c',
@@ -189,6 +198,15 @@ def build(bld):
           xxxx = 'hello',
           rtems_linkflags = ['--base', 'rtld.prelink',
                              '--entry', '_my_main'],
+          source = ['xa.c',
+                    'x-long-name-to-create-gnu-extension-in-archive.c'])
+    elif arch == 'sh':
+      bld(target = 'x.rap',
+          features = 'c rap',
+          xxxx = 'hello',
+          rtems_linkflags = ['--base', 'rtld.prelink',
+                             '--entry', '_my_main',
+                             '-a', 'shm4l'],
           source = ['xa.c',
                     'x-long-name-to-create-gnu-extension-in-archive.c'])
     else:
