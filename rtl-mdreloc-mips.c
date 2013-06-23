@@ -160,12 +160,13 @@ rtems_rtl_elf_relocate_rel (const rtems_rtl_obj_t*      obj,
       if ((tmp & 0x8000) == 0x8000)
         tmp |= 0xffff0000; /* Sign extend */
       tmp = symvalue + ((int)tmp*4) - (Elf_Addr)where;
-      if (((tmp >> 2) & 0xffff0000) != 0) {
+      tmp = (Elf_Sword)tmp >> 2;
+      if (((Elf_Sword)tmp > 0x7fff) || ((Elf_Sword)tmp < -0x8000)) {
         printf("R_MIPS_PC16 Overflow\n"); 
         return false;
       }
 
-      *where = ((tmp >> 2) & 0xffff) | (*where & 0xffff0000);
+      *where = (tmp & 0xffff) | (*where & 0xffff0000);
 
       if (rtems_rtl_trace (RTEMS_RTL_TRACE_RELOC))
         printf ("rtl: R_MIPS_PC16 %p @ %p in %s\n",

@@ -131,6 +131,17 @@ def build(bld):
                          '-a', 'shm4l'],
       source = ['1.c', '2.c'])
 
+    elif arch == 'm68k':
+      bld(target = 'test.rap',
+      features = 'c rap',
+      xxxx = 'hello', 
+
+      cflags = '-fno-common',
+  
+      rtems_linkflags = ['--base', 'rtld.prelink',
+                         '--entry', 'my_main'],
+      source = ['1.c', '2.c'])
+
     bld(target = '../test.rap',
 				source = ['test.rap'],
 				rule = 'cp ${SRC} ${TGT}')

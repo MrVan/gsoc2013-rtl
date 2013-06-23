@@ -183,7 +183,7 @@ rtems_rtl_elf_relocate_rel (const rtems_rtl_obj_t*      obj,
         tmp &= 0xffff;	
       } else if (ELF_R_TYPE(rel->r_info) == R_ARM_MOVT_ABS) {
         tmp >>= 16;	
-        if (((int)tmp >= 0x8000) || ((int)tmp < -0x8000)) {
+        if (((Elf_Sword)tmp >= 0x8000) || ((Elf_Sword)tmp < -0x8000)) {
           rtems_rtl_set_error (EINVAL, "%s: Overflow %ld "
                                "MOVT_ABS relocations",
                                sect->name, (uint32_t) ELF_R_TYPE(rel->r_info));

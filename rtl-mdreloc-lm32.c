@@ -82,7 +82,7 @@ rtems_rtl_elf_relocate_rela (const rtems_rtl_obj_t*      obj,
       insn = *where;
       tmp = symvalue + rela->r_addend - (Elf_Addr)where;
       tmp = (Elf32_Sword)tmp >> 2;
-      if (((Elf32_Sword)tmp > 0x7fff) || ((Elf32_Sword)tmp < -(Elf32_Sword)0x8000)){
+      if (((Elf32_Sword)tmp > 0x7fff) || ((Elf32_Sword)tmp < -0x8000)){
         printf("BRANCH Overflow\n");
         return false;
       }
