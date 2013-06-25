@@ -39,7 +39,7 @@ rtems_rtl_elf_relocate_rela (const rtems_rtl_obj_t*      obj,
   where = (Elf_Addr *)(sect->base + rela->r_offset);
 
   if (rtems_rtl_trace (RTEMS_RTL_TRACE_RELOC)) {
-      printf("rela relocation type is %d relocated address 0x%08x",
+      printf("rela relocation type is %d relocated address 0x%08x\n",
               ELF_R_TYPE(rela->r_info), where);
   }
 

@@ -220,10 +220,10 @@ def build(bld):
 
     bld.recurse('testcase');
 
-    if re.match('pc[3456]86', bsp) is not None:
-        raps = ['bsdport.rap']
-    else:
-        raps = []
+#    if re.match('pc[3456]86', bsp) is not None:
+#raps = ['bsdport.rap']
+#    else:
+    raps = []
 
     if arch == 'v850':
       bld(target = 'fs-root.tar',
