@@ -142,6 +142,7 @@ def configure(conf):
         flags = _load_flags(conf, ab, conf.options.rtems_path)
 
         conf.env.CFLAGS = flags['CFLAGS']
+        conf.env.CPUFLAGS = ','.join(flags['CPUFLAGS'])
         conf.env.LINKFLAGS = flags['CFLAGS'] + flags['LDFLAGS']
         conf.env.LIB = flags['LIB']
 
@@ -180,7 +181,10 @@ def tweaks(conf, arch_bsp):
     # If big endian for sh, the 'elf32-shl' should be changed to 'elf32-sh'
     #
     elif conf.env.RTEMS_ARCH in ['sh']:
-        conf.env.OBJCOPY_FLAGS = ['-I', 'binary', '-O', 'elf32-shl']
+        if conf.env.RTEMS_BSP in ['simsh4'] or conf.env.RTEMS_BSP in ['simsh2e'] or conf.env.RTEMS_BSP in ['gensh4']:
+            conf.env.OBJCOPY_FLAGS = ['-I', 'binary', '-O', 'elf32-shl']
+        else:
+            conf.env.OBJCOPY_FLAGS = ['-I', 'binary', '-O', 'elf32-sh']
     else:
         conf.env.OBJCOPY_FLAGS = ['-O', 'elf32-' + conf.env.RTEMS_ARCH]
 
@@ -477,6 +481,7 @@ def _load_flags(conf, arch_bsp, path):
         pkg = None
     flags = {}
     _log_header(conf)
+    flags['CPUFLAGS'] = _load_flags_set('CPUFLAGS', arch_bsp, conf, config, pkg)
     flags['CFLAGS'] = _load_flags_set('CFLAGS', arch_bsp, conf, config, pkg)
     flags['LDFLAGS'] = _load_flags_set('LDFLAGS', arch_bsp, conf, config, pkg)
     flags['LIB'] = _load_flags_set('LIB', arch_bsp, conf, config, pkg)
@@ -520,7 +525,7 @@ USELIB_VARS['rap'] = set(['RTEMS_LINKFLAGS'])
 @TaskGen.extension('.c')
 class rap(link_task):
         "Link object files into a RTEMS applicatoin"
-        run_str = '${RTEMS_LD} ${RTEMS_LINKFLAGS} --cc ${CC} ${SRC} -o ${TGT[0].abspath()} ${STLIB_MARKER} ${STLIBPATH_ST:STLIBPATH} ${STLIB_ST:STLIB} ${LIBPATH_ST:LIBPATH} ${LIB_ST:LIB}'
+        run_str = '${RTEMS_LD} ${RTEMS_LINKFLAGS} --cc ${CC} --cpuflags ${CPUFLAGS} ${SRC} -o ${TGT[0].abspath()} ${STLIB_MARKER} ${STLIBPATH_ST:STLIBPATH} ${STLIB_ST:STLIB} ${LIBPATH_ST:LIBPATH} ${LIB_ST:LIB}'
         ext_out = ['.rap']
         vars    = ['RTEMS_LINKFLAGS', 'LINKDEPS']
         inst_to = '${BINDIR}'

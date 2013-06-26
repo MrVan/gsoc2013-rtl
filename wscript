@@ -58,7 +58,10 @@ def build(bld):
     # Endian for sh
     #
     if arch == 'sh':
-      bld.cflags += ['-D_BYTE_ORDER=_LITTLE_ENDIAN'];
+      if bsp == 'simsh4' or bsp == 'simsh2e' or bsp == 'gensh4':
+          bld.cflags += ['-D_BYTE_ORDER=__ORDER_LITTLE_ENDIAN__'];
+      else:
+          bld.cflags += ['-D_BYTE_ORDER=__BIG_ENDIAN__'];
 
     if re.match('pc[3456]86', bsp) is not None:
         bld.defines += ['RTEMS_APP_IDEDISK=1']
