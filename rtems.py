@@ -142,7 +142,7 @@ def configure(conf):
         flags = _load_flags(conf, ab, conf.options.rtems_path)
 
         conf.env.CFLAGS = flags['CFLAGS']
-        conf.env.CPUFLAGS = ','.join(flags['CPUFLAGS'])
+        conf.env.CPUFLAGS = ','.join(flags['CFLAGS'])
         conf.env.LINKFLAGS = flags['CFLAGS'] + flags['LDFLAGS']
         conf.env.LIB = flags['LIB']
 
