@@ -358,6 +358,8 @@ rtems_rap_load (const char* name, int mode, int argc, const char* argv[])
       return false;
     }
   }
+  
+  rtems_rap_unlock ();
 
   return true;
 }
