@@ -37,7 +37,7 @@ function c_trailer()
   if (mustalign2)
     print ("asm(\"  .align 2\");");
   else
-    print ("asm(\"  .align 0\");");
+    print ("asm(\"  .balign 1\");");
   print ("asm(\"  .ascii \\\"\\xde\\xad\\xbe\\xef\\\"\");");
   print ("asm(\"  .align   4\");");
   print ("asm(\"__rtems_rtl_base_globals_size:\");");
@@ -127,7 +127,7 @@ END {
         if (mustalign2)
           printf ("asm(\"  .align 2\");\n");
         else
-          printf ("asm(\"  .align 0\");\n");
+          printf ("asm(\"  .balign 1\");\n");
         
         printf ("asm(\"  .long %s\");\n", symbols[s]);
       }

@@ -186,9 +186,9 @@ def build(bld):
 
     if arch == 'bfin' or arch == 'h8300' or arch == 'v850' or arch == 'sh':
       bld.env.GSYMS_FLAGS += ['--has-underscore']
-    if arch == 'sh' or arch == 'arm':
-      bld.env.GSYMS_FLAGS += ['--must-align2']
-      bld.cflags += ['-D__align2__']
+#    if arch == 'sh' or arch == 'arm':
+#      bld.env.GSYMS_FLAGS += ['--must-align2']
+#      bld.cflags += ['-D__align2__']
 
     bld(name = 'gsyms',
         target = 'rtld-gsyms.c',
