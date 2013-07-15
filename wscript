@@ -165,8 +165,7 @@ def build(bld):
     bld.objects(name = 'rootfs.prelink',
                 target = 'fs-root-tarfile.o',
                 source = 'fs-root.tar',
-#rule = '${OBJCOPY} -I binary -B ${RTEMS_ARCH} ${OBJCOPY_FLAGS} ${SRC} ${TGT}')
-                rule = '${OBJCOPY} -I binary -B h8300h ${OBJCOPY_FLAGS} ${SRC} ${TGT}')
+                rule = '${OBJCOPY} -I binary -B ${RTEMS_ARCH} ${OBJCOPY_FLAGS} ${SRC} ${TGT}')
 
     bld(features = 'c cprogram',
         target = 'rtld.prelink',
@@ -237,15 +236,14 @@ def build(bld):
     else:
       bld(target = 'fs-root.tar',
           name = 'fs',
-          source = ['shell-init', 'libx.a', 'x.rap', 'test.rap'] + raps,
+          source = ['shell-init', 'libx.a','libxx.a','x.rap', 'test.rap'] + raps,
           rule = 'tar --format=ustar -cf ${TGT} ${SRC}')
 
     bld.objects(name = 'rootfs',
                 target = 'fs-root-tarfile.o',
                 source = 'fs-root.tar',
                 depends_on = 'fs',
-#                rule = '${OBJCOPY} -I binary -B ${RTEMS_ARCH} ${OBJCOPY_FLAGS} ${SRC} ${TGT}')
-                rule = '${OBJCOPY} -I binary -B h8300h ${OBJCOPY_FLAGS} ${SRC} ${TGT}')
+                rule = '${OBJCOPY} -I binary -B ${RTEMS_ARCH} ${OBJCOPY_FLAGS} ${SRC} ${TGT}')
 
     bld(features = 'c cprogram',
         target = 'rtld',

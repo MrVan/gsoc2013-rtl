@@ -630,6 +630,10 @@ rtems_rtl_elf_parse_sections (rtems_rtl_obj_t* obj, int fd, Elf_Ehdr* ehdr)
         flags = RTEMS_RTL_OBJ_SECT_STR;
         break;
 
+      case 0x70000003:
+        printf("ARM.attributes\n");
+        break;
+
       default:
         printf ("rtl: unsupported section: %2d: type=%02d flags=%02x\n",
                 section, (int) shdr.sh_type, (int) shdr.sh_flags);

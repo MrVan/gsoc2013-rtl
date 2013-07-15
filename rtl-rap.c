@@ -357,7 +357,19 @@ rtems_rtl_rap_relocate (rtems_rtl_rap_t* rap, rtems_rtl_obj_t* obj)
 
         if ((info & (1 << 30)) != 0)
         {
-          symname = rap->strtab + symname_size;
+          if ((info & (1 << 29)) != 0)
+          {
+            int order;
+            order = (info & (~(0xe00000ff))) >> 8;
+            printf("order = %d\n", order);
+            symvalue = obj->global_table[order].value;
+            printf("symvalue = 0x%x, name %s\n",obj->global_table[order].value,obj->global_table[order].name);
+            symname = obj->global_table[order].name;
+          }
+          else
+          {
+            symname = rap->strtab + symname_size;
+          }
         }
         else
         {
@@ -378,16 +390,19 @@ rtems_rtl_rap_relocate (rtems_rtl_rap_t* rap, rtems_rtl_obj_t* obj)
           symname = symname_buffer;
         }
 
-        symbol = rtems_rtl_symbol_obj_find_internal (obj, symname, index, symbinding);
-
-        if (!symbol)
+        if ((info & (1<<29)) == 0)
         {
-          rtems_rtl_set_error (EINVAL, "global symbol not found: %s", symname);
-          free (symname_buffer);
-          return false;
+          symbol = rtems_rtl_symbol_obj_find_internal (obj, symname, index, symbinding);
+  
+          if (!symbol)
+          {
+            rtems_rtl_set_error (EINVAL, "global symbol not found: %s", symname);
+            free (symname_buffer);
+            return false;
+          }
+  
+          symvalue = (Elf_Word) symbol->value;
         }
-
-        symvalue = (Elf_Word) symbol->value;
       }
 
       if (is_rela)

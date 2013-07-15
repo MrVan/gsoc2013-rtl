@@ -943,6 +943,7 @@ rtems_rtl_obj_file_load (rtems_rtl_obj_t* obj, int fd)
 {
   int l;
 
+  printf("==============%d\n", (sizeof (loaders) / sizeof (rtems_rtl_loader_table_t)));
   for (l = 0; l < (sizeof (loaders) / sizeof (rtems_rtl_loader_table_t)); ++l)
   {
     if (loaders[l].check (obj, fd))

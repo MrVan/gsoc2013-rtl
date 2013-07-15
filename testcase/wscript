@@ -4,9 +4,10 @@ import rtems
 def build(bld):
     arch = bld.get_env()['RTEMS_ARCH']
 
-    bld(target = 'x',
+    bld(target = 'xx',
         features = 'c cstlib',
         includes = bld.includes,
+        cflags = '-mcpu=arm1176jzf-s -fno-common',
         defines = bld.defines,
         source = ['1.c', '2.c'])
 
@@ -155,4 +156,7 @@ def build(bld):
 
     bld(target = '../test.rap',
 				source = ['test.rap'],
+				rule = 'cp ${SRC} ${TGT}')
+    bld(target = '../libxx.a',
+				source = ['libxx.a'],
 				rule = 'cp ${SRC} ${TGT}')

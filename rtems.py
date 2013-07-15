@@ -525,7 +525,7 @@ USELIB_VARS['rap'] = set(['RTEMS_LINKFLAGS'])
 @TaskGen.extension('.c')
 class rap(link_task):
         "Link object files into a RTEMS applicatoin"
-        run_str = '${RTEMS_LD} ${RTEMS_LINKFLAGS} --cc ${CC} --cpuflags ${CPUFLAGS} ${SRC} -o ${TGT[0].abspath()} ${STLIB_MARKER} ${STLIBPATH_ST:STLIBPATH} ${STLIB_ST:STLIB} ${LIBPATH_ST:LIBPATH} ${LIB_ST:LIB}'
+        run_str = '${RTEMS_LD} ${RTEMS_LINKFLAGS} --cc ${CC}  ${SRC} -o ${TGT[0].abspath()} ${STLIB_MARKER} ${STLIBPATH_ST:STLIBPATH} ${STLIB_ST:STLIB} ${LIBPATH_ST:LIBPATH} ${LIB_ST:LIB} -v -v -v -v -v -v'
         ext_out = ['.rap']
         vars    = ['RTEMS_LINKFLAGS', 'LINKDEPS']
         inst_to = '${BINDIR}'
