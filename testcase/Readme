@@ -9,3 +9,11 @@ arm:
   waf configure --rtems=/opt/rtems-4.11 --rtems-tools=/opt/rtems-4.11 --rtems-archs=arm  --rtems-bsps=arm/realview_pbx_a9_qemu
 
   In the wscript, you can use different cflags to test.
+
+powerpc:
+  Simulator:
+  psim -i build/powerpc-rtems4.11-psim/rtld
+
+  Configuration:
+  waf configure --rtems=/opt/rtems-4.11 --rtems-tools=/opt/rtems-4.11 --rtems-archs=powerpc  --rtems-bsps=powerpc/psim
+  "-fno-common" are add to cflags to avoid common section problem.

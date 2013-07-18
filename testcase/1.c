@@ -10,7 +10,19 @@ void hello(int arg)
     case 2:
       printf("Inter-module call hello()\n");
       break;
+#if defined PPC
+    case 24:
+      printf("PPC ADDR24 'bla hello' call\n");
+      break;
+    case 14:
+      printf("PPC REL14 'beq cr7, hello' jump\n");
+      break;
+    case 15:
+      printf("PPC ADDR14 'beqa cr7, hello' jump\n");
+      break;
+#endif
     default:
+      printf("no arg in hello\n");
       return;
   }
 }
@@ -99,6 +111,32 @@ int rtems(int argc, char **argv)
       );
 #endif
 
+#elif defined PPC
+  __asm__ volatile (
+      "stwu 3, -8(1)\r\n"
+      "li 3, 24\r\n"
+      "bla hello\r\n" /*ADDR24*/
+      "nop\r\n"
+      "nop\r\n"
+      "lwz 3, 8(1)\r\n"
+      "addi 1, 1, 8\r\n"
+      );
+
+  __asm__ volatile (
+      "stwu 3, -4(1)\r\n"
+      "li 3, 14\r\n"
+      "cmpwi cr7, 3, 14\r\n"
+      "bl 1f\r\n"
+      "1: mflr 6\r\n"
+      "addi 6, 6, 20\r\n"
+      "mtlr 6\r\n"
+      "beq cr7, hello\r\n" /*REL14*/
+      "nop\r\n"
+      "nop\r\n"
+      "nop\r\n"
+      "lwz 3, 4(1)\r\n"
+      "addi 1, 1, 4\r\n"
+      );
 #else
   /* other archs */
 #endif
