@@ -50,7 +50,11 @@ void hello(int arg)
 
 #endif
     default:
+#if defined (__m68k__)
+      printf("M68K PC16 pass\n");
+#else
       printf("no arg in hello\n");
+#endif
       return;
   }
 }
@@ -306,6 +310,17 @@ int rtems(int argc, char **argv)
     printf("R_M32R_32_RELA, .word global pass\n");
 
 #endif
+
+#elif defined (__m68k__)
+  __asm__ volatile (
+      ".align 2\n\t"
+      "subal #4, %%a7\n\t"
+      "lea 1f, %%a0\n\t"
+      "movel %%a0, %%a7@(0)\n\t"
+      "bra hello\n\t" /* R_68K_PC16 */
+      "1:\n\t"
+      "nop\n\t" : : :"a0", "a1"
+      );
 #else
   /* other archs */
 #endif
