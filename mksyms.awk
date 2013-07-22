@@ -16,8 +16,13 @@ function c_header()
   print (" *  Automatically generated. Do not edit, just regenerate.");
   print (" */");
   print ("");
+  print ("#if __bfin__ || __h8300__ || __v850__");
+  print ("extern unsigned char _rtems_rtl_base_globals[];");
+  print ("extern unsigned int _rtems_rtl_base_globals_size;");
+  print ("#else")
   print ("extern unsigned char __rtems_rtl_base_globals[];");
   print ("extern unsigned int __rtems_rtl_base_globals_size;");
+  print ("#endif")
   print ("");
   print ("asm(\"  .align   4\");");
   print ("asm(\"__rtems_rtl_base_globals:\");");
@@ -26,7 +31,16 @@ function c_header()
 function c_trailer()
 {
   print ("asm(\"  .byte    0\");");
+  print ("#if __mips__")
   print ("asm(\"  .align 0\");");
+  print ("#else");
+  print ("asm(\"  .balign 1\");");
+  print ("#endif");
+  print ("#if __mips__")
+  print ("asm(\"  .align 0\");");
+  print ("#else");
+  print ("asm(\"  .balign 1\");");
+  print ("#endif");
   print ("asm(\"  .ascii \\\"\\xde\\xad\\xbe\\xef\\\"\");");
   print ("asm(\"  .align   4\");");
   print ("asm(\"__rtems_rtl_base_globals_size:\");");
@@ -38,8 +52,13 @@ function c_trailer()
 function c_rtl_call_body()
 {
   print ("{");
+  print ("#if __bfin__ || __h8300__ || __v850__")
+  print ("  rtems_rtl_base_sym_global_add (_rtems_rtl_base_globals,");
+  print ("                                 _rtems_rtl_base_globals_size);");
+  print ("#else")
   print ("  rtems_rtl_base_sym_global_add (__rtems_rtl_base_globals,");
   print ("                                 __rtems_rtl_base_globals_size);");
+  print ("#endif")
   print ("}");
 }
 
@@ -93,7 +112,11 @@ END {
       printf ("asm(\"  .asciz \\\"%s\\\"\");\n", symbols[s]);
       if (embed)
       {
-        printf ("asm(\"  .align 0\");\n");
+        print ("#if __mips__")
+        print ("asm(\"  .align 0\");");
+        print ("#else");
+        print ("asm(\"  .balign 1\");");
+        print ("#endif");
         printf ("asm(\"  .long %s\");\n", symbols[s]);
       }
       else
