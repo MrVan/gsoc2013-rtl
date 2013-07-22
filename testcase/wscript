@@ -74,6 +74,17 @@ def build(bld):
                          '--entry', '_my_main'],
       source = ['1.c', '2.c'])
 
+    elif arch == 'h8300':
+      bld(target = 'test.rap',
+      features = 'c rap',
+      xxxx = 'hello',
+
+      cflags = '-fno-common',
+
+      rtems_linkflags = ['--base', 'rtld.prelink',
+                         '--entry', '_my_main'],
+      source = ['1.c', '2.c'])
+
     bld(target = '../test.rap',
 				source = ['test.rap'],
 				rule = 'cp ${SRC} ${TGT}')
