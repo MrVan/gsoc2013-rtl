@@ -174,6 +174,8 @@ def tweaks(conf, arch_bsp):
         conf.env.OBJCOPY_FLAGS = ['-I', 'binary', '-O', 'elf32-littlearm']
     elif conf.env.RTEMS_ARCH in ['mips']:
         conf.env.OBJCOPY_FLAGS = ['-I', 'binary', '-O', 'elf32-bigmips']
+    elif conf.env.RTEMS_ARCH in ['moxie']:
+        conf.env.OBJCOPY_FLAGS = ['-I', 'binary', '-O', 'elf32-bigmoxie']
     else:
         conf.env.OBJCOPY_FLAGS = ['-O', 'elf32-' + conf.env.RTEMS_ARCH]
 
