@@ -57,10 +57,16 @@ def build(bld):
     if re.match('pc[3456]86', bsp) is not None:
         bld.defines += ['RTEMS_APP_IDEDISK=1']
 
+		#
+		# The MIPS 32
+		#
+    if arch == 'mips':
+        bld.defines += ['ELFSIZE=32']
+
     #
     # The ARM as special BSP initialise code.
     #
-    if arch == 'arm' or arch == 'powerpc':
+    if arch == 'arm' or arch == 'powerpc' or arch == 'mips':
         bld(target = 'bspinit',
             features = 'c',
             includes = bld.includes,

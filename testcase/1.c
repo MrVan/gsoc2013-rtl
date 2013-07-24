@@ -137,6 +137,38 @@ int rtems(int argc, char **argv)
       "lwz 3, 4(1)\r\n"
       "addi 1, 1, 4\r\n"
       );
+#elif defined (__mips__)
+  __asm__ volatile (
+      "addiu $29, $29, -8\n\t"
+      "sw $24,4($29)\n\t"
+      "sw $25,0($29)\n\t"
+      "la $24, 1f\n\t"
+      "lw $24, 0($24)\n\t"
+      "li $25, 32\t\n"
+      "sw $25, 0($24)\n\t"
+      "j 3f\n\t"
+      "1:\n\t"
+      ".word global\n\t"
+      "3:\n\t"
+      "lw $24,4($29)\n\t"
+      "lw $25,0($29)\n\t"
+      "addiu $29, $29, 8\n\t"
+      );
+
+  if (global == 32)
+    printf("R_MIPS_32: '.word global' pass \n");
+#if 1
+    printf("R_MIPS_32: '.word global' pass \n");
+#endif
+
+  __asm__ volatile (
+     "la $31, 1f\n\t"
+     "b tst_pc16\n\t" /* R_MIPS_PC16 */
+     "j tst_pc16\n\t"
+     "1:\n\t"
+     "nop\n\t"
+      );
+
 #else
   /* other archs */
 #endif
