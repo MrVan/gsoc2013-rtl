@@ -326,6 +326,8 @@ typedef struct {
 #define EM_CE           119     /* Freescale Communication Engine RISC core */
 #define EM_M32C         120     /* Renesas M32C series microprocessors */
 
+#define EM_LATTICEMICO32 138    /* RICS processor for Lattice FPGA architecture */
+
 #define EM_MICROBLAZE   189     /* Xilinx MicroBlaze 32-bit RISC soft processor core */
 
 /* Unofficial machine types follow */

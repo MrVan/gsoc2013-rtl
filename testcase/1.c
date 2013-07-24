@@ -242,6 +242,28 @@ int rtems(int argc, char **argv)
       "1:\n\t"
       "nop\n\t"
       );
+#elif defined (__lm32__)
+  __asm__ volatile (
+      "addi sp, sp, -16\n\t"
+      "sw (sp+8), r1\n\t"
+      "sw (sp+4), r0\n\t"
+      "mvhi r1, 1f\n\t"
+      "ori r1, r1, 1f\n\t"
+      "lw r1, (r1+0)\n\t"
+      "mvi r0, 22\n\t"
+      "sw (r1+0), r0\n\t"
+      "bi 2f\n\t"
+      "1:\n\t"
+      ".word global\n\t"
+      "2:\n\t"
+      "nop\n\t"
+      "lw r1, (sp+8)\n\t"
+      "lw r0, (sp+4)\n\t"
+      "addi sp, sp, 16\n\t" : : : "r0", "r1"
+      );
+
+  if (global == 22)
+    printf("R_LM32_32 pass\n");
 #else
   /* other archs */
 #endif
