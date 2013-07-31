@@ -26,5 +26,8 @@ rtems_rtl_alloc_heap (bool                  allocate,
   if (allocate)
     *address = malloc (size);
   else
+  {
     free (*address);
+    *address = NULL;
+  }
 }
