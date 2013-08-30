@@ -798,7 +798,8 @@ rtems_rtl_rap_file_load (rtems_rtl_obj_t* obj, int fd)
   /*
    * Set up the decompressor.
    */
-  rtems_rtl_obj_comp (&rap.decomp, rap.file, fd, rap.compression, rlen);
+  rtems_rtl_obj_comp (&rap.decomp, rap.file, fd, rap.compression,
+                      rlen + obj->ooffset);
 
   /*
    * uint32_t: machinetype
