@@ -39,6 +39,8 @@ struct link_map {
   uint32_t          sec_num;              /**< The count of section. */
   section_detail*   sec_detail;           /**< The section details. */
   uint32_t*         sec_addr[rap_secs];   /**< The RAP section addr. */
+  uint32_t          rpathlen;             /**< The length of the path. */
+  char*             rpath;                /**< The path of object files. */
   struct link_map*  l_next;               /**< Linked list of mapped libs. */
   struct link_map*  l_prev;
 };

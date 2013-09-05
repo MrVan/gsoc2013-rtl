@@ -115,6 +115,7 @@ typedef struct rtems_rtl_rap_s
   uint32_t                relocs_size;  /**< The relocation table size. */
   uint32_t                symbols;      /**< The number of symbols. */
   uint32_t                strtable_size;/**< The size of section names and obj names. */
+  uint32_t                rpathlen;     /**< The length of rpath. */
   char*                   strtable;     /**< The detail string which resides in obj detail. */
 } rtems_rtl_rap_t;
 
@@ -468,11 +469,31 @@ rtems_rtl_rap_load_details (rtems_rtl_rap_t* rap, rtems_rtl_obj_t* obj)
     return false;
   }
 
+  if (rtems_rtl_trace (RTEMS_RTL_TRACE_DETAIL))
+  {
+    if (rap->rpathlen > 0)
+      printf ("File rpath:\n");
+  }
+
+  while (pos < rap->rpathlen)
+  {
+    if (rtems_rtl_trace (RTEMS_RTL_TRACE_DETAIL))
+    {
+      printf ("          %s\n", rap->strtable + pos);
+    }
+    pos = pos + strlen (rap->strtable + pos) + 1;
+  }
+
+  if (rap->rpathlen > 0)
+    pos = rap->rpathlen;
+
   for (i = 0; i < obj->obj_num; ++i)
   {
     tmp1 = (struct link_map*) (obj->detail) + i;
     tmp1->name = rap->strtable + pos;
     tmp1->sec_num = obj->sec_num[i];
+    tmp1->rpathlen = rap->rpathlen;
+    tmp1->rpath = (char*) rap->strtable;
     pos += strlen (tmp1->name) + 1;
 
     if (!i)
@@ -867,6 +888,9 @@ rtems_rtl_rap_file_load (rtems_rtl_obj_t* obj, int fd)
   if (obj->obj_num > 0)
   {
     obj->sec_num = (uint32_t*) malloc (sizeof (uint32_t) * obj->obj_num);
+
+    if (!rtems_rtl_rap_read_uint32 (rap.decomp, &rap.rpathlen))
+      return false;
 
     uint32_t i;
     for (i = 0; i < obj->obj_num; ++i)
