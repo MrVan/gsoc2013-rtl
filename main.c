@@ -47,6 +47,7 @@
 int remote_debug;
 #endif
 
+#include <rtl.h>
 #include <rap-shell.h>
 #include <rtl-shell.h>
 #include <rtl-trace.h>
@@ -57,7 +58,7 @@ int remote_debug;
  *  The tarfile is built automatically externally so we need to account
  *  for the leading symbol on the names.
  */
-#if defined(__sh__)
+#if (RTL_GLUE(__USER_LABEL_PREFIX__, 1) == RTL_GLUE(_, 1))
   #define SYM(_x) _x
 #else
   #define SYM(_x) _ ## _x
