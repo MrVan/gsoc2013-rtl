@@ -12,4 +12,4 @@ rtl-trace set load load-sect symbol reloc #unresolved
 rap ld ./bsdport.rap
 rap ls
 
-rap ld ./test.rap
+#rap ld ./test.rap
