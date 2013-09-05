@@ -694,6 +694,110 @@ rtems_rtl_elf_file_check (rtems_rtl_obj_t* obj, int fd)
   return true;
 }
 
+bool rtems_rtl_elf_load_details (rtems_rtl_obj_t* obj)
+{
+  rtems_chain_control* sections = NULL;
+  rtems_chain_node*    node = NULL;
+  size_t               base_offset = 0;
+  bool                 first = true;
+  size_t               mask = 0;
+  struct link_map*     l = NULL;
+  int                  sec_num = 0;
+  int                  i = 0;
+
+  /* caculate the size of sections' name. */
+
+  for (mask = RTEMS_RTL_OBJ_SECT_TEXT;
+       mask <= RTEMS_RTL_OBJ_SECT_BSS;
+       mask <<= 1)
+  {
+    sections = &obj->sections;
+    node = rtems_chain_first (sections);
+    while (!rtems_chain_is_tail (sections, node))
+    {
+      rtems_rtl_obj_sect_t* sect = (rtems_rtl_obj_sect_t*) node;
+
+      if ((sect->size != 0) && ((sect->flags & mask) != 0))
+      {
+        ++sec_num;
+      }
+      node = rtems_chain_next (node);
+    }
+  }
+
+  obj->obj_num = 1;
+  obj->detail = rtems_rtl_alloc_new (RTEMS_RTL_ALLOC_OBJECT,
+                                     sizeof(struct link_map) +
+                                     sec_num * sizeof (section_detail), true);
+  if (!obj->detail)
+  {
+    rtems_rtl_set_error (ENOMEM, "no memory for obj global syms");
+    return false;
+  }
+
+  l = (struct link_map*) obj->detail;
+  l->name = obj->oname;
+  l->sec_num = sec_num;
+  l->sec_detail = (section_detail*) (l + 1);
+  l->rpathlen = 0;
+  l->rpath = NULL;
+  l->l_next = NULL;
+  l->l_prev = NULL;
+  l->sec_addr[rap_text] = obj->text_base;
+  l->sec_addr[rap_const] = obj->const_base;
+  l->sec_addr[rap_data] = obj->data_base;
+  l->sec_addr[rap_bss] = obj->bss_base;
+
+
+  section_detail* sd = l->sec_detail;
+  sections = &obj->sections;
+  node = rtems_chain_first (sections);
+  for (mask = RTEMS_RTL_OBJ_SECT_TEXT;
+       mask <= RTEMS_RTL_OBJ_SECT_BSS;
+       mask <<= 1)
+  {
+    first = true;
+
+    sections = &obj->sections;
+    node = rtems_chain_first (sections);
+    while (!rtems_chain_is_tail (sections, node))
+    {
+      rtems_rtl_obj_sect_t* sect = (rtems_rtl_obj_sect_t*) node;
+
+      if ((sect->size != 0) && ((sect->flags & mask) != 0))
+      {
+        sd[i].name = sect->name;
+        sd[i].size = sect->size;
+        if (mask == RTEMS_RTL_OBJ_SECT_TEXT)
+        {
+          sd[i].rap_id = rap_text;
+          sd[i].offset = sect->base - obj->text_base;
+        }
+        if (mask == RTEMS_RTL_OBJ_SECT_CONST)
+        {
+          sd[i].rap_id = rap_const;
+          sd[i].offset = sect->base - obj->const_base;
+        }
+        if (mask == RTEMS_RTL_OBJ_SECT_DATA)
+        {
+          sd[i].rap_id = rap_data;
+          sd[i].offset = sect->base - obj->data_base;
+        }
+        if (mask == RTEMS_RTL_OBJ_SECT_BSS)
+        {
+          sd[i].rap_id = rap_bss;
+          sd[i].offset = sect->base - obj->bss_base;
+        }
+
+        ++i;
+      }
+      node = rtems_chain_next (node);
+    }
+  }
+
+  return true;
+}
+
 bool
 rtems_rtl_elf_file_load (rtems_rtl_obj_t* obj, int fd)
 {
@@ -766,6 +870,11 @@ rtems_rtl_elf_file_load (rtems_rtl_obj_t* obj, int fd)
 
   if (!rtems_rtl_obj_relocate (obj, fd, rtems_rtl_elf_relocator, &ehdr))
     return false;
+
+  if (!rtems_rtl_elf_load_details (obj))
+  {
+    return false;
+  }
 
   return true;
 }
