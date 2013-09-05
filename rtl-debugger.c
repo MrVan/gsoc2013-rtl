@@ -28,6 +28,8 @@
 
 #include <link.h>
 #include <rtl.h>
+#include <rtl-trace.h>
+#include "rtl-obj-fwd.h"
 
 struct r_debug  _rtld_debug;
 
@@ -37,4 +39,55 @@ _rtld_debug_state (void)
   /*
    * Empty. GDB only needs to hit this location.
    */
+}
+
+int
+_rtld_linkmap_add (rtems_rtl_obj_t* obj)
+{
+  struct link_map* l = (struct link_map*)obj->detail;
+  struct link_map* prev;
+  uint32_t obj_num = obj->obj_num;
+  int i;
+
+  if (rtems_rtl_trace (RTEMS_RTL_TRACE_DETAIL))
+    printf ("rtl: linkmap_add\n");
+
+  for (i = 0; i < obj_num; ++i)
+  {
+    l[i].sec_addr[rap_text] = obj->text_base;
+    l[i].sec_addr[rap_const] = obj->const_base;
+    l[i].sec_addr[rap_data] = obj->data_base;
+    l[i].sec_addr[rap_bss] = obj->bss_base;
+  }
+
+  if (_rtld_debug.r_map == NULL)
+  {
+    _rtld_debug.r_map = l;
+    return;
+  }
+
+  for (prev = _rtld_debug.r_map; prev->l_next != NULL; prev = prev->l_next);
+
+  l->l_prev = prev;
+  prev->l_next = l;
+}
+
+void
+_rtld_linkmap_delete (rtems_rtl_obj_t* obj)
+{
+  struct link_map* l = (struct link_map*)obj->detail;
+  /* link_maps are allocated together if not 1 */
+  struct link_map* e = l + obj->obj_num - 1;
+
+  while (e && e->l_next) e = e->l_next;
+
+  if (l->l_prev == NULL)
+  {
+    if ((_rtld_debug.r_map = e->l_next) != NULL)
+      e->l_next->l_prev = NULL;
+    return;
+  }
+  if ((l->l_prev->l_next = e->l_next) != NULL)
+    e->l_next->l_prev = l->l_prev;
+  return;
 }

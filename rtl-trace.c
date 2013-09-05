@@ -66,7 +66,8 @@ rtems_rtl_trace_shell_command (int argc, char *argv[])
     "global-sym",
     "load-sect",
     "allocator",
-    "unresolved"
+    "unresolved",
+    "detail"
   };
 
   rtems_rtl_trace_mask set_value = 0;

@@ -10,26 +10,46 @@
 #include <sys/types.h>
 
 #include <machine/elf_machdep.h>
+#include <stdint.h>
 
-typedef struct link_map {
-	caddr_t		 l_addr;	/* Base Address of library */
-#ifdef __mips__
-	caddr_t		 l_offs;	/* Load Offset of library */
-#endif
-	const char	*l_name;	/* Absolute Path to Library */
-	void		*l_ld;		/* Pointer to .dynamic in memory */
-	struct link_map	*l_next;	/* linked list of of mapped libs */
-	struct link_map *l_prev;
-} Link_map;
+enum sections
+{
+  rap_text = 0,
+  rap_const = 1,
+  rap_ctor = 2,
+  rap_dtor = 3,
+  rap_data = 4,
+  rap_bss = 5,
+  rap_secs = 6
+};
+
+/**
+ * Object details.
+ */
+typedef struct
+{
+  char* name;
+  uint32_t offset;
+  uint32_t size;
+  uint32_t rap_id;
+}section_detail;
+
+struct link_map {
+  char*             name;                 /**< Name of the obj. */
+  uint32_t          sec_num;              /**< The count of section. */
+  section_detail*   sec_detail;           /**< The section details. */
+  uint32_t*         sec_addr[rap_secs];   /**< The RAP section addr. */
+  struct link_map*  l_next;               /**< Linked list of mapped libs. */
+  struct link_map*  l_prev;
+};
 
 struct r_debug {
-	int r_version;			/* not used */
+	int r_version;			      /* not used */
 	struct link_map *r_map;		/* list of loaded images */
-	void (*r_brk)(void);		/* pointer to break point */
 	enum {
-		RT_CONSISTENT,		/* things are stable */
-		RT_ADD,			/* adding a shared library */
-		RT_DELETE		/* removing a shared library */
+		RT_CONSISTENT,		      /* things are stable */
+		RT_ADD,			            /* adding a shared library */
+		RT_DELETE		            /* removing a shared library */
 	} r_state;
 };
 

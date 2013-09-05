@@ -101,6 +101,10 @@ rtems_rtl_obj_free (rtems_rtl_obj_t* obj)
                               &obj->data_base, &obj->bss_base);
   rtems_rtl_symbol_obj_erase (obj);
   rtems_rtl_obj_free_names (obj);
+  if (obj->sec_num)
+    free (obj->sec_num);
+  if (obj->detail)
+    rtems_rtl_alloc_del (RTEMS_RTL_ALLOC_OBJECT, (void*)obj->detail);
   rtems_rtl_alloc_del (RTEMS_RTL_ALLOC_OBJECT, obj);
   return true;
 }
@@ -997,6 +1001,12 @@ rtems_rtl_obj_load (rtems_rtl_obj_t* obj)
     return false;
   }
 
+  if (!_rtld_linkmap_add (obj)) /* For GDB */
+  {
+    close (fd);
+    return false;
+  }
+
   rtems_rtl_obj_caches_flush ();
 
   close (fd);
@@ -1007,6 +1017,7 @@ rtems_rtl_obj_load (rtems_rtl_obj_t* obj)
 bool
 rtems_rtl_obj_unload (rtems_rtl_obj_t* obj)
 {
+  _rtld_linkmap_delete(obj);
   rtems_rtl_symbol_obj_erase (obj);
   return rtems_rtl_obj_free (obj);
 }
