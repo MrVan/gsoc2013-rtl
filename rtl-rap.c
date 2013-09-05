@@ -440,7 +440,7 @@ rtems_rtl_rap_load_details (rtems_rtl_rap_t* rap, rtems_rtl_obj_t* obj)
   section_detail* tmp2;
   uint32_t obj_detail_size;
   uint32_t pos = 0;
-  uint32_t i,j;
+  int i,j;
 
   obj_detail_size = sizeof (struct link_map) * obj->obj_num;
 
@@ -515,8 +515,8 @@ rtems_rtl_rap_load_details (rtems_rtl_rap_t* rap, rtems_rtl_obj_t* obj)
   {
     if (rtems_rtl_trace (RTEMS_RTL_TRACE_DETAIL))
     {
-      printf ("File %u: %s\n", i, ((struct link_map*)obj->detail + i)->name);
-      printf ("Section: %u sections\n", obj->sec_num[i]);
+      printf ("File %d: %s\n", i, ((struct link_map*) obj->detail + i)->name);
+      printf ("Section: %d sections\n",(unsigned int) obj->sec_num[i]);
     }
 
     ((struct link_map*)obj->detail + i)->sec_detail = tmp2;
@@ -548,7 +548,8 @@ rtems_rtl_rap_load_details (rtems_rtl_rap_t* rap, rtems_rtl_obj_t* obj)
       if (rtems_rtl_trace (RTEMS_RTL_TRACE_DETAIL))
       {
         printf ("name:%16s offset:0x%08x rap_id:%d size:0x%x\n",
-                tmp2->name, tmp2->offset, tmp2->rap_id, tmp2->size);
+                tmp2->name, (unsigned int) tmp2->offset,
+                (unsigned int) tmp2->rap_id, (unsigned int) tmp2->size);
       }
 
       tmp2 += 1;

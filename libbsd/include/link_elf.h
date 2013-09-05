@@ -11,6 +11,7 @@
 
 #include <machine/elf_machdep.h>
 #include <stdint.h>
+#include <rtl-obj-fwd.h>
 
 enum sections
 {
@@ -28,14 +29,17 @@ enum sections
  */
 typedef struct
 {
-  char* name;
-  uint32_t offset;
-  uint32_t size;
-  uint32_t rap_id;
+  const char* name;   /**< Section name. */
+  uint32_t    offset; /**< The offset in the elf file. */
+  uint32_t    size;   /**< The size of the section. */
+  uint32_t    rap_id; /**< Which obj does this section belongs to. */
 }section_detail;
 
+/**
+ * link map structure will be used for GDB support.
+ */
 struct link_map {
-  char*             name;                 /**< Name of the obj. */
+  const char*       name;                 /**< Name of the obj. */
   uint32_t          sec_num;              /**< The count of section. */
   section_detail*   sec_detail;           /**< The section details. */
   uint32_t*         sec_addr[rap_secs];   /**< The RAP section addr. */
@@ -45,6 +49,9 @@ struct link_map {
   struct link_map*  l_prev;
 };
 
+/**
+ * r_debug is used to manage the debug related structures.
+ */
 struct r_debug {
 	int r_version;			      /* not used */
 	struct link_map *r_map;		/* list of loaded images */
@@ -55,4 +62,18 @@ struct r_debug {
 	} r_state;
 };
 
+/*
+ * stub function. It is empty.
+ */
+void _rtld_debug_state (void);
+
+/*
+ * add link map to the list.
+ */
+int _rtld_linkmap_add (rtems_rtl_obj_t* obj);
+
+/*
+ * Remove link map from the list.
+ */
+void _rtld_linkmap_delete (rtems_rtl_obj_t* obj);
 #endif	/* _LINK_ELF_H_ */

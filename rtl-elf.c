@@ -698,7 +698,6 @@ bool rtems_rtl_elf_load_details (rtems_rtl_obj_t* obj)
 {
   rtems_chain_control* sections = NULL;
   rtems_chain_node*    node = NULL;
-  size_t               base_offset = 0;
   bool                 first = true;
   size_t               mask = 0;
   struct link_map*     l = NULL;

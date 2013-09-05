@@ -1,4 +1,5 @@
-#include <stdio.h>
+#include "3.h"
+
 int rtems(int argc, char **argv)
 {
   int a;

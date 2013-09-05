@@ -1,3 +1,5 @@
+#include "i.h"
+
 int global;
 static char local;
 

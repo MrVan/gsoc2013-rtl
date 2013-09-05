@@ -1,3 +1,5 @@
+#include "i.h"
+
 extern int global;
 extern void hello(int);
 
@@ -10,6 +12,8 @@ void tst_pc16(void)
 #endif
 
 #if defined (__sparc__)
+void tst_wdisp(void);
+
 void tst_wdisp(void)
 {
   printf("R_SPARC_DISP22: pass\n");
@@ -22,9 +26,12 @@ int test(int argc, char **argv)
   global = 1; //inter-module data access
   printf("In test() global = %d\n", global);
   hello(2); //inter-module call
+
+  return 0;
 }
 
 int my_main(int argc, char **argv)
 {
   exit(0);
+  return 0;
 }

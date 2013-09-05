@@ -26,6 +26,7 @@
 #include "config.h"
 #endif
 
+#include <stdio.h>
 #include <link.h>
 #include <rtl.h>
 #include <rtl-trace.h>
@@ -63,13 +64,15 @@ _rtld_linkmap_add (rtems_rtl_obj_t* obj)
   if (_rtld_debug.r_map == NULL)
   {
     _rtld_debug.r_map = l;
-    return;
+    return true;
   }
 
   for (prev = _rtld_debug.r_map; prev->l_next != NULL; prev = prev->l_next);
 
   l->l_prev = prev;
   prev->l_next = l;
+
+  return true;
 }
 
 void
