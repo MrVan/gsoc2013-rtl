@@ -11,3 +11,5 @@
 
 rap ld ./bsdport.rap
 rap ls
+
+rap ld ./test.rap
