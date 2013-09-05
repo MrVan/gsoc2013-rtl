@@ -49,6 +49,17 @@ extern "C" {
  */
 
 /**
+ * Macros to glue two tokens.
+ */
+#ifdef __STDC__
+#define RTL_XGLUE(a,b) a##b
+#else
+#define RTL_XGLUE(a,b) a/**/b
+#endif
+
+#define RTL_GLUE(a,b) RTL_XGLUE(a,b)
+
+/**
  * The number of buckets in the global symbol table.
  */
 #define RTEMS_RTL_SYMS_GLOBAL_BUCKETS (32)

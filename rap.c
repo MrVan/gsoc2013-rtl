@@ -62,6 +62,15 @@ typedef struct rtems_rap_app_s
    RTEMS_INHERIT_PRIORITY | RTEMS_NO_PRIORITY_CEILING | RTEMS_LOCAL)
 
 /**
+ * RTL entry.
+ */
+#if (RTL_GLUE(__USER_LABEL_PREFIX__, 1) == RTL_GLUE(_, 1))
+  #define RTL_ENTRY_POINT "_rtems"
+#else
+  #define RTL_ENTRY_POINT "rtems"
+#endif
+
+/**
  * Static RAP data is returned to the user when the loader is locked.
  */
 static rtems_rap_data_t rap_;
@@ -323,7 +332,7 @@ rtems_rap_load (const char* name, int mode, int argc, const char* argv[])
       return false;
     }
 
-    init = dlsym (app->handle, "rtems");
+    init = dlsym (app->handle, RTL_ENTRY_POINT);
     if (!init)
     {
       rtems_rap_get_rtl_error ();
@@ -332,7 +341,7 @@ rtems_rap_load (const char* name, int mode, int argc, const char* argv[])
       return false;
     }
 
-    fini = dlsym (app->handle, "rtems");
+    fini = dlsym (app->handle, RTL_ENTRY_POINT);
     if (!fini)
     {
       rtems_rap_get_rtl_error ();
@@ -375,7 +384,7 @@ rtems_rap_unload (const char* name)
     return false;
   }
 
-  fini = dlsym (app->handle, "rtems");
+  fini = dlsym (app->handle, RTL_ENTRY_POINT);
   if (!fini)
   {
     rtems_rap_get_rtl_error ();
