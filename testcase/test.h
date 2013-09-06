@@ -8,6 +8,10 @@ int rtems_arm(int arg);
 int rtems_thumb(int arg);
 #endif
 
+#if defined (__mips__)
+void tst_pc16(void);
+#endif
+
 int rtems(int argc, char* argv[]);
 int test(int argc, char* argv[]);
 int my_main(int argc, char* argv[]);
