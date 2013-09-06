@@ -11,6 +11,14 @@ void tst_pc16(void)
 }
 #endif
 
+#if defined (__sparc__)
+void tst_wdisp(void)
+{
+  printf("R_SPARC_DISP22: pass\n");
+  return;
+}
+#endif
+
 int test(int argc, char* argv[])
 {
   global = 1; //inter-module data access

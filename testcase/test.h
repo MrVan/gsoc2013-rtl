@@ -12,6 +12,10 @@ int rtems_thumb(int arg);
 void tst_pc16(void);
 #endif
 
+#if defined (__sparc__)
+void tst_wdisp(void);
+#endif
+
 int rtems(int argc, char* argv[]);
 int test(int argc, char* argv[]);
 int my_main(int argc, char* argv[]);

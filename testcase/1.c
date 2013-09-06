@@ -22,6 +22,15 @@ void hello(int arg)
     case 15:
       printf("PPC ADDR14 'beqa cr7, hello' jump\n");
       break;
+#elif defined (__sparc__)
+    case 22:
+      printf("SPARC WDISP22 'b hello'\n");
+      break;
+    case 13:
+      printf("SPARC 13 'mov hello, %%l4'\n");
+      break;
+#else
+
 #endif
     default:
       printf("no arg in hello\n");
@@ -170,6 +179,54 @@ int rtems(int argc, char* argv[])
      "j tst_pc16\n\t"
      "1:\n\t"
      "nop\n\t"
+      );
+
+#elif defined (__sparc__)
+  __asm__ volatile (
+     "sethi %%hi(1f), %%l5\n\t"
+     "ld [%%l5 + %%lo(1f)], %%l4\n\t"
+     "mov 32, %%l5\n\t"
+     "st %%l5, [%%l4]\n\t"
+     "b 2f\n\t"
+     "nop\n\t"
+     "nop\n\t"
+     "1:\n\t"
+     ".word global\n\t" /* R_SPARC_32 */
+     "2:\n\t"
+     "nop\n\t"
+     "nop\n\t" : : : "l4", "l5");
+
+  if (global == 32)
+    printf("R_SPARC_32: '.word global' pass\n");
+
+  __asm__ volatile (
+     "mov %%o0, %%l4\n\t"
+     "mov 22, %%o0\n\t"
+     "sethi %%hi(3f), %%o7\n\t"
+     "or %%o7, %%lo(3f), %%o7\n\t"
+     "b hello\n\t" /* R_SPARC_WDISP22 */
+     "nop\n\t"
+     "3:\t\n"
+     "nop\n\t"
+     "mov %%l4, %%o0\n\t"
+     "nop\n\t" : : : "o0", "o7"
+      );
+
+  /* R_SPARC_13: Overflow are not checked, Thus
+   * should use assemble language to handle this
+   * to avoid overflow.
+   */
+  __asm__ volatile (
+     "mov hello, %%l4\n\t"
+     "and %%l4, 0x3ff, %%l4\n\t"
+     "sethi %%hi(hello), %%l5\n\t"
+     "or %%l4, %%l5, %%l4\n\t"
+     "mov %%o0, %%l5\n\t"
+     "mov 13, %%o0\n\t"
+     "call hello\n\t"
+     "nop\n\t"
+     "mov %%l5, %%o0\n\t"
+     "nop\n\t": : :
       );
 
 #else
