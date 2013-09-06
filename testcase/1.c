@@ -3,6 +3,16 @@
 int global;
 static char local;
 
+#if defined (__bfin__)
+void bfin_test(void)
+{
+  printf("PCREL12_JUMP_S: JUMP.S _bfin_test\n");
+  printf("Do not have a good idea about how to"
+         "return from here, thus just halt here\n");
+  while(1);
+}
+#endif
+
 void hello(int arg)
 {
   switch (arg) {
@@ -229,6 +239,12 @@ int rtems(int argc, char* argv[])
      "nop\n\t": : :
       );
 
+#elif defined (__bfin__)
+  __asm__ volatile (
+      "JUMP.S _bfin_test\n\t"
+      "1:\n\t"
+      "nop\n\t"
+      );
 #else
   /* other archs */
 #endif

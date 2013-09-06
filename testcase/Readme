@@ -17,3 +17,13 @@ powerpc:
   Configuration:
   waf configure --rtems=/opt/rtems-4.11 --rtems-tools=/opt/rtems-4.11 --rtems-archs=powerpc  --rtems-bsps=powerpc/psim
   "-fno-common" are add to cflags to avoid common section problem.
+
+bfin:
+  Because the simulator does not respond to the input keys, use the automatic shell-init to load test.rap
+  Also you should modify the
+            rtems_linkflags = ['--base', 'rtld.prelink',
+                               '--entry', '_my_main'],
+  "-mlong-calls" can generate fewer reloc types. One can use this option to see what it affects.
+  Simulator:
+    bf537Stamp-gdb build/bfin-rtems4.11-bf537Stamp/rtld
+  Note: if use gdb to run rtl, add 'rap ld './test.rap'' into shell-init

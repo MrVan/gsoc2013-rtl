@@ -16,6 +16,10 @@ void tst_pc16(void);
 void tst_wdisp(void);
 #endif
 
+#if defined (__bfin__)
+void bfin_test(void);
+#endif
+
 int rtems(int argc, char* argv[]);
 int test(int argc, char* argv[]);
 int my_main(int argc, char* argv[]);
