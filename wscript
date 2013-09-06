@@ -60,7 +60,7 @@ def build(bld):
     #
     # The ARM as special BSP initialise code.
     #
-    if arch == 'arm':
+    if arch == 'arm' or arch == 'powerpc':
         bld(target = 'bspinit',
             features = 'c',
             includes = bld.includes,
