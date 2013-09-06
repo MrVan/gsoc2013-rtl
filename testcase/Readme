@@ -62,3 +62,14 @@ m32r:
 
  Simulator:
     m32rsim-gdb build/m32r-rtems4.11-m32rsim/rtld
+
+M68K:
+ Use the following two patchs and patch them to qemu-0.11.0-rc1
+ http://lists.nongnu.org/archive/html/qemu-devel/2009-09/msg00811.html
+ http://lists.nongnu.org/archive/html/qemu-devel/2009-09/msg00353.html
+
+ http://www.rtems.org/pipermail/rtems-users/2009-September/005941.html shows how
+ to compile and run.
+
+ Simulator:
+   qemu-system-m68k -M uc5282 -nographic -kernel build/m68k-rtems4.11-uC5282/rtld

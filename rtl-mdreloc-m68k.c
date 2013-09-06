@@ -16,6 +16,20 @@
 #include "rtl-error.h"
 #include <rtl-trace.h>
 
+static inline int overflow_8_check(int value)
+{
+  if ((value & 0xffffff00) && (~value & 0xffffff80))
+    return true;
+  return false;
+}
+
+static inline int overflow_16_check(int value)
+{
+  if ((value & 0xffff0000) && (~value & 0xffff8000))
+    return true;
+  return false;
+}
+
 bool
 rtems_rtl_elf_rel_resolve_sym (Elf_Word type)
 {
@@ -32,6 +46,7 @@ rtems_rtl_elf_relocate_rela (const rtems_rtl_obj_t*      obj,
 {
 	Elf_Addr  target = 0;
   Elf_Addr* where;
+  Elf_Word  tmp;
 
   where = (Elf_Addr *)(sect->base + rela->r_offset);
 
@@ -39,6 +54,31 @@ rtems_rtl_elf_relocate_rela (const rtems_rtl_obj_t*      obj,
 		case R_TYPE(NONE):
 			break;
 
+    case R_TYPE(PC8):
+      tmp = symvalue + rela->r_addend - (Elf_Addr)where;
+      if (overflow_8_check(tmp))
+        return false;
+
+      *(uint8_t *)where = tmp;
+
+      if (rtems_rtl_trace (RTEMS_RTL_TRACE_RELOC))
+        printf ("rtl: reloc R_TYPE_8/PC8 in %s --> %p (%p) in %s\n",
+                sect->name, (void*) (symvalue + rela->r_addend),
+                (void *)*where, rtems_rtl_obj_oname (obj));
+      break;
+
+    case R_TYPE(PC16):
+      tmp = symvalue + rela->r_addend - (Elf_Addr)where;
+      if (overflow_16_check(tmp))
+        return false;
+
+      *(uint16_t*)where = tmp;
+
+      if (rtems_rtl_trace (RTEMS_RTL_TRACE_RELOC))
+        printf ("rtl: reloc R_TYPE_16/PC16 in %s --> %p (%p) in %s\n",
+                sect->name, (void*) (symvalue + rela->r_addend),
+                (void *)*where, rtems_rtl_obj_oname (obj));
+      break;
 		case R_TYPE(PC32):
       target = (Elf_Addr) symvalue + rela->r_addend;
       *where += target - (Elf_Addr)where;
@@ -92,7 +132,7 @@ rtems_rtl_elf_relocate_rela (const rtems_rtl_obj_t*      obj,
       return false;
   }
 
-  return false;
+  return true;
 }
 
 bool
