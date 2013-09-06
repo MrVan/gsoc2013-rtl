@@ -1,0 +1,10 @@
+#include "3.h"
+int rtems(int argc, char* argv[]);
+
+int rtems(int argc, char* argv[])
+{
+  int a;
+  a =ar_func_test();
+  printf("a = 0x%x\n",a);
+  return 0;
+}

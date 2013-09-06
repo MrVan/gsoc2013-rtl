@@ -189,6 +189,8 @@ def build(bld):
 
     bld.recurse('testcase');
 
+    bld.add_group ()
+
     if re.match('pc[3456]86', bsp) is not None:
         raps = ['bsdport.rap']
     else:
@@ -196,8 +198,9 @@ def build(bld):
 
     bld(target = 'fs-root.tar',
         name = 'fs',
-        source = ['shell-init', 'libx.a', 'x.rap', 'test.rap'] + raps,
+        source = ['shell-init', 'libx.a', 'x.rap', 'test.rap', 'my.rap', 'lib3.ra', 'libttt.ra'] + raps,
         rule = 'tar --format=ustar -cf ${TGT} ${SRC}')
+
     bld.objects(name = 'rootfs',
                 target = 'fs-root-tarfile.o',
                 source = 'fs-root.tar',
@@ -226,6 +229,7 @@ def build(bld):
 
 def rebuild(ctx):
     import waflib.Options
+
     waflib.Options.commands.extend(['clean', 'build'])
 
 def tags(ctx):

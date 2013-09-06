@@ -16,6 +16,44 @@ def build(bld):
 #   cflags = '-mthumb -fno-common -DTHUMB_TEST',
 #   cflags = '-marm -mcpu=arm1176jzf-s -fno-common -DARM_TEST',
 
+############ For ar rap #################
+    bld(target = '3',
+        features = 'c cstlib',
+        includes = bld.includes,
+        cflags = '-fno-common',
+        defines = bld.defines,
+        source = ['3.c', '33.c', '333.c'])
+
+    bld(target = '../lib3.ra',
+				rule = 'touch ../lib3.ra')
+
+    bld(
+    features = 'c ra',
+    xxxx = 'hello',
+
+    cflags = '-fno-common',
+
+    rtems_raflags = ['--lib', '3',
+                     '--lib-path', 'testcase',
+                     '--output-path', './',
+                     '--no-stdlibs'],)
+
+    bld(target = 'my.rap',
+    features = 'c rap',
+    xxxx = 'hello',
+
+    cflags = '-fno-common',
+
+    rtems_linkflags = ['--base', 'rtld.prelink',
+                       '--entry', 'rtems',
+                       '--lib-path', 'testcase',
+                       '--lib', '3', '--runtime-lib', 'ttt'],
+    source = ['4.c'])
+
+    bld(target = '../libttt.ra',
+				rule = 'touch ../libttt.ra')
+##############End########################
+
     if arch == 'arm':
       bld(target = 'test.rap',
       features = 'c rap',
@@ -134,4 +172,8 @@ def build(bld):
 
     bld(target = '../test.rap',
 				source = ['test.rap'],
+				rule = 'cp ${SRC} ${TGT}')
+
+    bld(target = '../my.rap',
+				source = ['my.rap'],
 				rule = 'cp ${SRC} ${TGT}')
