@@ -54,3 +54,11 @@ v850:
                               '--entry', '_my_main'],
  Simulator:
     v850sim-gdb build/v850-rtems4.11-v850sim/rtld
+
+m32r:
+ One can choose different cflags in wscript for m32r to see what happens.
+
+ configure --rtems=/opt/rtems-4.11 --rtems-tools=/opt/rtems-4.11 --rtems-archs=m32r
+
+ Simulator:
+    m32rsim-gdb build/m32r-rtems4.11-m32rsim/rtld

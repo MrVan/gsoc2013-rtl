@@ -66,7 +66,7 @@ def build(bld):
     #
     # The ARM as special BSP initialise code.
     #
-    if arch == 'arm' or arch == 'powerpc' or arch == 'mips' or arch == 'bfin' or arch == 'h8300' or arch == 'lm32' or arch == 'moxie' or arch == 'v850':
+    if arch == 'arm' or arch == 'powerpc' or arch == 'mips' or arch == 'bfin' or arch == 'h8300' or arch == 'lm32' or arch == 'moxie' or arch == 'v850' or arch == 'm32r':
         bld(target = 'bspinit',
             features = 'c',
             includes = bld.includes,
