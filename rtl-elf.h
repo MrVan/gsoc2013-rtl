@@ -136,6 +136,13 @@ bool rtems_rtl_elf_find_symbol (rtems_rtl_obj_t* obj,
  */
 bool rtems_rtl_elf_file_check (rtems_rtl_obj_t* obj, int fd);
 
+ /**
+ * The ELF file details handler.
+ * 
+ * @param obj Load the details of the obj.
+ */
+bool rtems_rtl_elf_load_details (rtems_rtl_obj_t* obj);
+
 /**
  * The ELF format load handler.
  *
