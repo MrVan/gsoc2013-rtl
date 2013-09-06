@@ -163,6 +163,13 @@ struct rtems_rtl_obj_s
   void*                entry;        /**< The entry point of the module. */
   uint32_t             checksum;     /**< The checksum of the text sections. A
                                       * zero means do not checksum. */
+  void*                detail;       /**< The file details. It contains the elf file
+                                      * detail, mainly including elf file name,
+                                      * section offset, section size, which
+                                      * elf this section belongs to.*/
+  uint32_t*            sec_num;      /**< The sec nums of each obj. */
+  uint32_t             obj_num;      /**< The count of elf files in an rtl obj. */
+  struct link_map*     linkmap;      /**< For GDB. */
 };
 
 /**

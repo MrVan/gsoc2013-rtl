@@ -114,6 +114,8 @@ typedef struct rtems_rtl_rap_s
   uint32_t                strtab_size;  /**< The string table size. */
   uint32_t                relocs_size;  /**< The relocation table size. */
   uint32_t                symbols;      /**< The number of symbols. */
+  uint32_t                strtable_size;/**< The size of section names and obj names. */
+  char*                   strtable;     /**< The detail string which resides in obj detail. */
 } rtems_rtl_rap_t;
 
 /**
@@ -420,6 +422,118 @@ rtems_rtl_rap_relocate (rtems_rtl_rap_t* rap, rtems_rtl_obj_t* obj)
 
   free (symname_buffer);
 
+  return true;
+}
+
+/**
+ * The structure of obj->detail is
+ *
+ * |object_detail(0..obj_num)|section_detail(0..sec_num[0..obj_num])|
+ * obj_name(0..obj_num)|section_name(0..sec_num[0..obj_num])
+ *
+ */
+static bool
+rtems_rtl_rap_load_details (rtems_rtl_rap_t* rap, rtems_rtl_obj_t* obj)
+{
+  struct link_map* tmp1;
+  section_detail* tmp2;
+  uint32_t obj_detail_size;
+  uint32_t pos = 0;
+  int i,j;
+
+  obj_detail_size = sizeof (struct link_map) * obj->obj_num;
+
+  for (i = 0; i < obj->obj_num; ++i)
+  {
+    obj_detail_size += (obj->sec_num[i] * sizeof (section_detail));
+  }
+
+  obj->detail = rtems_rtl_alloc_new (RTEMS_RTL_ALLOC_OBJECT,
+                                     obj_detail_size + rap->strtable_size, true);
+
+  if (!obj->detail)
+  {
+    rap->strtable_size = 0;
+    rtems_rtl_set_error (ENOMEM, "no memory for obj global syms");
+    return false;
+  }
+
+  rap->strtable = obj->detail + obj_detail_size;
+
+  /* Read the obj names and section names */
+  if (!rtems_rtl_obj_comp_read (rap->decomp, rap->strtable,
+                                rap->strtable_size))
+  {
+    rtems_rtl_alloc_del (RTEMS_RTL_ALLOC_OBJECT, obj->detail);
+    return false;
+  }
+
+  for (i = 0; i < obj->obj_num; ++i)
+  {
+    tmp1 = (struct link_map*) (obj->detail) + i;
+    tmp1->name = rap->strtable + pos;
+    tmp1->sec_num = obj->sec_num[i];
+    pos += strlen (tmp1->name) + 1;
+
+    if (!i)
+    {
+      tmp1->l_next = NULL;
+      tmp1->l_prev = NULL;
+    }
+    else
+    {
+      (tmp1 - 1)->l_next = tmp1;
+      tmp1->l_prev = tmp1 - 1;
+      tmp1->l_next = NULL;
+    }
+  }
+
+  tmp2 =(section_detail*) ((struct link_map*) (obj->detail) + obj->obj_num);
+
+  for (i = 0; i < obj->obj_num; ++i)
+  {
+    if (rtems_rtl_trace (RTEMS_RTL_TRACE_DETAIL))
+    {
+      printf ("File %d: %s\n", i, ((struct link_map*) obj->detail + i)->name);
+      printf ("Section: %d sections\n",(unsigned int) obj->sec_num[i]);
+    }
+
+    ((struct link_map*)obj->detail + i)->sec_detail = tmp2;
+
+    for (j = 0; j < obj->sec_num[i]; ++j)
+    {
+      uint32_t name;
+      uint32_t rap_id;
+      uint32_t offset;
+      uint32_t size;
+
+      if (!rtems_rtl_rap_read_uint32 (rap->decomp, &name) ||
+          !rtems_rtl_rap_read_uint32 (rap->decomp, &offset) ||
+          !rtems_rtl_rap_read_uint32 (rap->decomp, &size))
+      {
+        rtems_rtl_alloc_del (RTEMS_RTL_ALLOC_SYMBOL, obj->detail);
+        return false;
+      }
+
+      rap_id = offset >> 28;
+      offset = offset & 0xfffffff;
+
+      tmp2->name = rap->strtable + name;
+      tmp2->offset = offset;
+      tmp2->rap_id = rap_id;
+      tmp2->size = size;
+      pos += strlen (tmp2->name) + 1;
+
+      if (rtems_rtl_trace (RTEMS_RTL_TRACE_DETAIL))
+      {
+        printf ("name:%16s offset:0x%08x rap_id:%d size:0x%x\n",
+                tmp2->name, (unsigned int) tmp2->offset,
+                (unsigned int) tmp2->rap_id, (unsigned int) tmp2->size);
+      }
+
+      tmp2 += 1;
+    }
+  }
   return true;
 }
 
@@ -744,6 +858,33 @@ rtems_rtl_rap_file_load (rtems_rtl_obj_t* obj, int fd)
     printf ("rtl: rap: load: symtab=%lu (%lu) strtab=%lu relocs=%lu\n",
             rap.symtab_size, rap.symbols,
             rap.strtab_size, rap.relocs_size);
+
+  /*
+   * Load the details
+   */
+  if (!rtems_rtl_rap_read_uint32 (rap.decomp, &obj->obj_num))
+    return false;
+
+  if (obj->obj_num > 0)
+  {
+    obj->sec_num = (uint32_t*) malloc (sizeof (uint32_t) * obj->obj_num);
+
+    uint32_t i;
+    for (i = 0; i < obj->obj_num; ++i)
+    {
+      if (!rtems_rtl_rap_read_uint32 (rap.decomp, &(obj->sec_num[i])))
+        return false;
+    }
+
+    if (!rtems_rtl_rap_read_uint32 (rap.decomp, &rap.strtable_size))
+      return false;
+
+    if (rtems_rtl_trace (RTEMS_RTL_TRACE_DETAIL))
+      printf ("rtl: rap: details: obj_num=%lu\n", obj->obj_num);
+
+    if (!rtems_rtl_rap_load_details (&rap, obj))
+      return false;
+  }
 
   /*
    * uint32_t: text_size
