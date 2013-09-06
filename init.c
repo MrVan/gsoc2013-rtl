@@ -23,7 +23,16 @@
  * Configure base RTEMS resources.
  */
 #define CONFIGURE_RTEMS_INIT_TASKS_TABLE
+
+/*
+ * v850sim bsp only has 1M ram
+ */
+#if defined(__v850__)
+#define CONFIGURE_MEMORY_OVERHEAD                  210
+#else
 #define CONFIGURE_MEMORY_OVERHEAD                  512
+#endif
+
 #define CONFIGURE_MAXIMUM_TASKS                    rtems_resource_unlimited (10)
 #define CONFIGURE_MAXIMUM_SEMAPHORES               rtems_resource_unlimited (10)
 #define CONFIGURE_MAXIMUM_MESSAGE_QUEUES           rtems_resource_unlimited (5)
@@ -54,7 +63,9 @@
 #define CONFIGURE_ATA_DRIVER_TASK_PRIORITY         14
 #endif
 
+#if !defined(__v850__)
 #define CONFIGURE_FILESYSTEM_ALL
+#endif
 
 /**
  * Tell confdefs.h to provide the configuration.

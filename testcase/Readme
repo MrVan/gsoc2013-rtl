@@ -42,3 +42,15 @@ lm32:
  Simulator:
     lm32_evr-gdb build/lm32-rtems4.11-lm32_evr/rtld
     qemu-system-lm32  -M lm32-evr -nographic -global lm32,sys.enabled=1 -kernel build/lm32-rtems4.11-lm32_evr/rtld
+
+v850:
+ Because the v850sim only has 1MB ram, the memory allocation should be considered carefully.
+ Otherwise, error will be incured.
+
+ configure --rtems=/opt/rtems-4.11 --rtems-tools=/opt/rtems-4.11 --rtems-archs=v850 --rtems-bsps=v850/v850sim
+
+ Also you should modify the
+           rtems_linkflags = ['--base', 'rtld.prelink',
+                              '--entry', '_my_main'],
+ Simulator:
+    v850sim-gdb build/v850-rtems4.11-v850sim/rtld
