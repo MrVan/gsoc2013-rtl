@@ -145,7 +145,7 @@ def build(bld):
     #
     bld(target = 'fs-root.tar',
         source = ['shell-init', 'libx.a'],
-        rule = 'tar cf - ${SRC} > ${TGT}')
+        rule = 'tar --format=ustar -cf ${TGT} ${SRC}')
     bld.objects(name = 'rootfs.prelink',
                 target = 'fs-root-tarfile.o',
                 source = 'fs-root.tar',
@@ -181,6 +181,8 @@ def build(bld):
         source = ['xa.c',
                   'x-long-name-to-create-gnu-extension-in-archive.c'])
 
+    bld.recurse('testcase');
+
     if re.match('pc[3456]86', bsp) is not None:
         raps = ['bsdport.rap']
     else:
@@ -188,8 +190,8 @@ def build(bld):
 
     bld(target = 'fs-root.tar',
         name = 'fs',
-        source = ['shell-init', 'libx.a', 'x.rap'] + raps,
-        rule = 'tar cf - ${SRC} > ${TGT}')
+        source = ['shell-init', 'libx.a', 'x.rap', 'test.rap'] + raps,
+        rule = 'tar --format=ustar -cf ${TGT} ${SRC}')
     bld.objects(name = 'rootfs',
                 target = 'fs-root-tarfile.o',
                 source = 'fs-root.tar',
