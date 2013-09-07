@@ -48,12 +48,14 @@
  *	...delete feature...
  *	#endif
  */
+#if !defined(__GNUC_PREREQ__)
 #ifdef __GNUC__
 #define	__GNUC_PREREQ__(x, y)						\
 	((__GNUC__ == (x) && __GNUC_MINOR__ >= (y)) ||			\
 	 (__GNUC__ > (x)))
 #else
 #define	__GNUC_PREREQ__(x, y)	0
+#endif
 #endif
 
 #include <machine/cdefs.h>

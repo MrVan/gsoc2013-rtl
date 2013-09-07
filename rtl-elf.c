@@ -698,7 +698,6 @@ bool rtems_rtl_elf_load_details (rtems_rtl_obj_t* obj)
 {
   rtems_chain_control* sections = NULL;
   rtems_chain_node*    node = NULL;
-  bool                 first = true;
   size_t               mask = 0;
   struct link_map*     l = NULL;
   int                  sec_num = 0;
@@ -755,8 +754,6 @@ bool rtems_rtl_elf_load_details (rtems_rtl_obj_t* obj)
        mask <= RTEMS_RTL_OBJ_SECT_BSS;
        mask <<= 1)
   {
-    first = true;
-
     sections = &obj->sections;
     node = rtems_chain_first (sections);
     while (!rtems_chain_is_tail (sections, node))

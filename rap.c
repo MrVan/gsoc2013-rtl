@@ -298,7 +298,7 @@ rtems_rap_load (const char* name, int mode, int argc, const char* argv[])
     rtems_rap_app_t*  app;
     rtems_rap_entry_t init;
     rtems_rap_entry_t fini;
-    uint32_t          size = 0;
+    size_t            size = 0;
     int               r;
 
     /*

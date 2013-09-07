@@ -62,6 +62,7 @@ void hello(int arg)
 }
 
 #if defined (__arm__)
+int rtems_arm(int arg);
 int rtems_arm(int arg)
 {
   switch (arg) {
@@ -72,6 +73,7 @@ int rtems_arm(int arg)
   return 0;
 }
 
+int rtems_thumb(int arg);
 int rtems_thumb(int arg)
 {
   switch (arg) {

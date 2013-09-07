@@ -40,7 +40,7 @@ bool
 rtems_rtl_find_file (const char*  name,
                      const char*  paths,
                      const char** file_name,
-                     uint32_t*    size)
+                     size_t*      size)
 {
   struct stat sb;
 
