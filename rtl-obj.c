@@ -130,7 +130,7 @@ rtems_rtl_obj_parse_name (rtems_rtl_obj_t* obj, const char* name)
    */
   end = name + strlen (name);
   colon = strrchr (name, ':');
-  if (colon == NULL || colon < strrchr(name, '/'));
+  if (colon == NULL || colon < strrchr(name, '/'))
     colon = end;
 
   oname = rtems_rtl_alloc_new (RTEMS_RTL_ALLOC_OBJECT, colon - name + 1, true);
