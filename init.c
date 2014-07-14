@@ -2,6 +2,9 @@
  * Configure the RTEMS initialisation.
  */
 
+#define CONFIGURE_MAXIMUM_POSIX_KEYS 16
+#define CONFIGURE_MAXIMUM_POSIX_KEY_VALUE_PAIRS 16
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
