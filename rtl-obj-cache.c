@@ -56,7 +56,7 @@ void
 rtems_rtl_obj_cache_flush (rtems_rtl_obj_cache_t* cache)
 {
   cache->fd        = -1;
-  cache->file_size = -1;
+  cache->file_size = 0;
   cache->level     = 0;
 }
 
@@ -75,15 +75,18 @@ rtems_rtl_obj_cache_read (rtems_rtl_obj_cache_t* cache,
     return false;
   }
 
-  if (offset > cache->file_size)
+  if (cache->fd == fd)
   {
-    rtems_rtl_set_error (EINVAL, "offset past end of file: offset=%i size=%i",
-                         (int) offset, (int) cache->file_size);
-    return false;
-  }
+    if (offset > cache->file_size)
+    {
+      rtems_rtl_set_error (EINVAL, "offset past end of file: offset=%i size=%i",
+                           (int) offset, (int) cache->file_size);
+      return false;
+    }
 
-  if ((offset + *length) > cache->file_size)
-    *length = cache->file_size - offset;
+    if ((offset + *length) > cache->file_size)
+      *length = cache->file_size - offset;
+  }
 
   while (true)
   {
